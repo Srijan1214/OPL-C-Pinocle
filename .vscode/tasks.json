@@ -1,0 +1,62 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "process",
+			"label": "g++ build active file",
+			"command": "/usr/bin/g++",
+			"args": [
+				"-Wshadow",
+				"-Wall",
+				"-Wno-sign-compare",
+				"-fsanitize=address",
+				"-fsanitize=undefined",
+				"-D_GLIBCXX_DEBUG",
+				"-g",
+				"${workspaceFolder}/main.cpp",
+				"-o",
+				"${workspaceFolder}/debug"
+			],
+			"options": {
+				"cwd": "/usr/bin"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		},
+		{
+			"type": "process",
+			"label": "g++",
+			"command": "/usr/bin/g++",
+			"args": [
+				"${workspaceFolder}/main.cpp",
+				"-o",
+				"${workspaceFolder}/test"
+			],
+			"options": {
+				"cwd": "/usr/bin"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		},
+		{
+			"label": "Run tests",
+			"type": "shell",
+			"command": "${workspaceFolder}/test",
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared"
+			}
+		  }
+	]
+}
