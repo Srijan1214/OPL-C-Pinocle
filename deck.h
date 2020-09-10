@@ -18,6 +18,8 @@ class Deck {
 	Card* Pop_Top_Card();
 	void Put_Card_Back_In_Deck(Card* a_card_ptr);
 
+	std::string Get_Stock_String();
+
    private:
 	void Remove_All_Cards_From_Deck();
 	void Destroy_All_Card_Pointers();

@@ -2,7 +2,8 @@
 	"files.associations": {
 		"*.ejs": "html",
 		"iostream": "cpp",
-		"vector": "cpp"
+		"vector": "cpp",
+		"ostream": "cpp"
 	},
 	"C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: Google, UseTab: Always, IndentWidth: 4, TabWidth: 4 }"
 }
