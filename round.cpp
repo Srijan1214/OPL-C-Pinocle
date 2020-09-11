@@ -1,7 +1,6 @@
 #include "round.h"
 
 Round::Round() : m_players({&m_player1,&m_player2}), m_scores(2,0){
-	std::cout << "round constructor" << std::endl;
 }
 
 void Round::Play_A_Round(int a_cur_round) {
@@ -14,6 +13,7 @@ void Round::Play_A_Round(int a_cur_round) {
 	// Tell the players which suit is trump suit
 	for(Player* player_ptr:m_players) {
 		player_ptr->Set_Trump_Suit(m_trump_card->Get_Suit());
+		player_ptr->Set_Trump_card(m_trump_card->Get_Card_Id());
 	}
 
 	Print_Interface_Message();
@@ -22,34 +22,51 @@ void Round::Play_A_Round(int a_cur_round) {
 		// The following function will update lead and chase player based on the outcome of the battle.
 		Play_Cards_Against_Each_Other();
 		//lead player declares meld
-		Print_Interface_Message();
-		m_players[m_cur_lead_player]->Get_Meld_To_Play();
+		// Print_Interface_Message();
+		int meld_index = m_players[m_cur_lead_player]->Get_Meld_To_Play();
+		if (meld_index >= 0 && meld_index < 9) {
+			m_scores[m_cur_lead_player] += Player::m_meld_scores[meld_index];
+		}
+		m_players[m_cur_lead_player]->Set_Round_Score(m_scores[m_cur_lead_player]);
 
 		const int chase_player = m_cur_lead_player ^ 1;
 		m_players[m_cur_lead_player]->Give_Card_To_Player(m_deck.Pop_Top_Card());
 		m_players[chase_player]->Give_Card_To_Player(m_deck.Pop_Top_Card());
+		std::cout << std::endl << "--------------------------------------------------------New Battle--------------------------------------------------------------------------------------------------" << std::endl;
 		Print_Interface_Message();
 	}
 
 	// In the following battle, the stock pile is finished and the trump card is given to the chase player.
 	Play_Cards_Against_Each_Other();
 	//lead player declares meld
-	Print_Interface_Message();
-	m_players[m_cur_lead_player]->Get_Meld_To_Play();
+	// Print_Interface_Message();
+	int meld_index = m_players[m_cur_lead_player]->Get_Meld_To_Play();
+	if (meld_index >= 0 && meld_index < 9) {
+		m_scores[m_cur_lead_player] += Player::m_meld_scores[meld_index];
+	}
+	m_players[m_cur_lead_player]->Set_Round_Score(m_scores[m_cur_lead_player]);
 
 	const int chase_player = m_cur_lead_player ^ 1;
 	m_players[m_cur_lead_player]->Give_Card_To_Player(m_deck.Pop_Top_Card());
 	m_players[chase_player]->Give_Card_To_Player(m_trump_card);
 
-	Print_Interface_Message();
+	std::cout << std::endl << "----------------------------------------------------------------------------------------------------------------------------------------------------------" << std::endl;
+	std::cout << "------------------------------------------------------------------------STOCK PILE EMPTIED----------------------------------------------------------------------------------" << std::endl;
+	std::cout << "----------------------------------------------------------------------------------------------------------------------------------------------------------" << std::endl;
+
 	//From now on cards aren't picked up from the stock pile.
 	for(int i = 0; i < 12; i++) {
 		// The following function will update lead and chase player based on the outcome of the battle.
+		std::cout << std::endl << "--------------------------------------------------------New Battle--------------------------------------------------------------------------------------------------" << std::endl;
+		Print_Interface_Message();
 		Play_Cards_Against_Each_Other();
 		//lead player declares meld
-		Print_Interface_Message();
-		m_players[m_cur_lead_player]->Get_Meld_To_Play();
-
+		// Print_Interface_Message();
+		int meld_index = m_players[m_cur_lead_player]->Get_Meld_To_Play();
+		if (meld_index >= 0 && meld_index < 9) {
+			m_scores[m_cur_lead_player] += Player::m_meld_scores[meld_index];
+		}
+		m_players[m_cur_lead_player]->Set_Round_Score(m_scores[m_cur_lead_player]);
 	}
 
 }
@@ -83,17 +100,16 @@ void Round::Play_Cards_Against_Each_Other() {
 		m_scores[m_cur_lead_player] += (lead_card->Get_Card_Weight() + chase_card->Get_Card_Weight());
 		m_players[m_cur_lead_player]->Add_Cards_To_Player_Capture_Pile(lead_card, chase_card);
 	} else {
-		m_scores[m_cur_lead_player] += (lead_card->Get_Card_Weight() + chase_card->Get_Card_Weight());
-		m_players[m_cur_lead_player]->Add_Cards_To_Player_Capture_Pile(lead_card, chase_card);
+		m_scores[chase_player] += (lead_card->Get_Card_Weight() + chase_card->Get_Card_Weight());
+		m_players[chase_player]->Add_Cards_To_Player_Capture_Pile(lead_card, chase_card);
 		//switch lead and chase player uf chase player wins
 		m_cur_lead_player^= 1;
 	}
 
 	if(who_won == 0) {
-		std::cout << "Player 1 Won" << std::endl;
-	} else
-	{
-		std::cout << "Player 2 won" << std::endl;
+		std::cout << "--------------------------------Player 1 WINS BATTLE--------------------------------" << std::endl << std::endl;
+	} else {
+		std::cout << "--------------------------------Player 2 WINS BATTLE--------------------------------" << std::endl << std::endl;
 	}
 	
 }
@@ -137,12 +153,12 @@ const std::vector<int> & Round::Get_Scores() const {
 }
 
 void Round::Print_Player1_Hand() {
-	std::cout << "Human:" << std::endl;
+	std::cout << "Human:" << " Score: " << m_scores[0] << std::endl;
 	std::cout << m_player1.Get_Console_Message() << std::endl;
 }
 
 void Round::Print_Player2_Hand() {
-	std::cout << "Computer:" << std::endl;
+	std::cout << "Computer:" << " Score: " << m_scores[1] << std::endl;
 	std::cout << m_player2.Get_Console_Message() << std::endl;
 }
 
@@ -153,5 +169,7 @@ void Round::Print_Interface_Message() {
 	Print_Player2_Hand();
 	std::cout << "Trump Card: " << m_trump_card->Get_Card_String_Value()  << std::endl;
 	std::cout << "Stocks: " << m_deck.Get_Stock_String() <<std::endl;
-	std::cout << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl;
+	// std::cout << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl;
+	std::cout << std::endl << "--------------------------------------------------------------------------------------";
+	std::cout << std::endl << std::endl;
 }

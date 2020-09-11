@@ -1,5 +1,7 @@
 #include "player.h"
 
+const int Player::m_meld_scores[9] = {150, 40, 20, 10, 100, 80, 60, 40, 40};
+
 Player::Player()
 	: m_no_of_times_meld_has_been_played(9, 0),
 	  m_which_card_used_for_meld(9, std::vector<bool>(48, false)),
@@ -23,11 +25,19 @@ void Player::Add_Cards_To_Player_Capture_Pile(Card* a_card_ptr1,
 
 bool Player::Is_Meld_Valid(std::vector<Card*>& a_meld_card_list) {
 	int meld_number = Get_Meld_Type_From_Cards(a_meld_card_list);
-	if(meld_number == -1){ 
+	if(meld_number < 0 && meld_number >= 9){ 
 		return false;
 	}
 
 	return Validate_If_Meld_Can_Be_Played(a_meld_card_list,meld_number);
+}
+
+void Player::Set_Round_Score(int a_score) {
+	m_round_score = a_score;
+}
+
+void Player::Set_Trump_card(int a_trump_card) {
+	m_trump_card_id = a_trump_card;
 }
 
 int Player::Get_Meld_Type_From_Cards(std::vector<Card*>& a_meld_card_list) {
@@ -96,7 +106,7 @@ int Player::Get_Meld_Type_From_Cards(std::vector<Card*>& a_meld_card_list) {
 			}
 		}
 		// If not a marriage then can be a Pinochle
-		if (first_face == 2 && second_face == 3 && first_suit == 0 &&
+		if (first_face == 3 && second_face == 2 && first_suit == 0 &&
 			second_suit == 3) {
 				return 8;
 		}
@@ -114,11 +124,11 @@ int Player::Get_Meld_Type_From_Cards(std::vector<Card*>& a_meld_card_list) {
 		const int second_face = Card::Get_Face_From_Id(meld_card_identifiers[1]);
 		const int second_suit = Card::Get_Suit_From_Id(meld_card_identifiers[1]);
 
-		const int third_face = Card::Get_Face_From_Id(meld_card_identifiers[1]);
-		const int third_suit = Card::Get_Suit_From_Id(meld_card_identifiers[1]);
+		const int third_face = Card::Get_Face_From_Id(meld_card_identifiers[2]);
+		const int third_suit = Card::Get_Suit_From_Id(meld_card_identifiers[2]);
 
-		const int fourth_face = Card::Get_Face_From_Id(meld_card_identifiers[1]);
-		const int fourth_suit = Card::Get_Suit_From_Id(meld_card_identifiers[1]);
+		const int fourth_face = Card::Get_Face_From_Id(meld_card_identifiers[3]);
+		const int fourth_suit = Card::Get_Suit_From_Id(meld_card_identifiers[3]);
 
 		if (first_suit == 0 && second_suit == 1 && third_suit == 2 &&
 			fourth_suit == 3) {
@@ -165,7 +175,7 @@ bool Player::Validate_If_Meld_Can_Be_Played(std::vector<Card*> & a_meld_card_lis
 
 	//return false if one card as been played for the same meld.
 	for(Card* card_ptr: a_meld_card_list) {
-		if(m_which_card_used_for_meld[a_meld_number][card_ptr->Get_Card_Id()] == false) {
+		if(m_which_card_used_for_meld[a_meld_number][card_ptr->Get_Card_Id()] == true) {
 			return false;
 		}
 	}

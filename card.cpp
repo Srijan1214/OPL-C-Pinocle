@@ -5,7 +5,7 @@ const char Card::m_face_char_arr[6] = {'9', 'X', 'J', 'Q', 'K', 'A'};
 const int Card::m_face_weights[6] = {0, 10, 2, 3, 4, 11};
 
 Card::Card(int a_id) : m_id(a_id) {
-
+	m_card_type = Get_Card_String_Value();
 }
 
 
@@ -17,6 +17,20 @@ Card::Card(int a_id) : m_id(a_id) {
 std::string Card::Get_Card_String_Value() {
 	const int suit_val = m_id / 12;
 	const int face_val = (m_id % 12) / 2;
+
+	std::string return_string = "  ";
+	char f = m_face_char_arr[face_val];
+	char b = m_suit_char_arr[suit_val];
+
+	return_string[0] = f;
+	return_string[1] = b;
+	// std::string return_string = m_face_char_arr[face_val] + m_suit_char_arr[suit_val];
+	return return_string;
+}
+
+std::string Card::Get_String_From_Id(int a_id) {
+	const int suit_val = a_id / 12;
+	const int face_val = (a_id % 12) / 2;
 
 	std::string return_string = "  ";
 	char f = m_face_char_arr[face_val];

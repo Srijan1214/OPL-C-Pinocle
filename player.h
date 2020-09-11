@@ -10,11 +10,14 @@ class Player {
 	Player();
 	void Give_Card_To_Player(Card* a_card_ptr);
 	std::vector<Card*> Ask_Which_Cards_To_Play_For_Meld();
-	void Add_Cards_To_Player_Capture_Pile (Card* a_card_ptr1, Card* a_card_ptr2);
-	void Set_Trump_Suit(int);
 	bool Validate_If_Meld_Can_Be_Played(std::vector<Card*> & a_meld_card_list, int meld_number);
 	void Update_Meld_History(std::vector<Card*> &, int);
+	void Add_Cards_To_Player_Capture_Pile (Card* a_card_ptr1, Card* a_card_ptr2);
+	void Set_Trump_Suit(int);
+	void Set_Round_Score(int a_score);
+	void Set_Trump_card(int);
 	std::string Get_Console_Message();
+	static const int m_meld_scores[9];
 	virtual std::vector<Card*> Ask_For_Meld_Cards() = 0;
 	virtual Card* Get_Card_To_Play(Card* a_lead_card_played) = 0; // Argument is NULL if the current player is lead player.
 	virtual int Get_Meld_To_Play() = 0;
@@ -28,4 +31,6 @@ class Player {
 	int Get_Meld_Type_From_Cards(std::vector<Card*> &);
 	bool Is_Meld_Valid(std::vector<Card*> &);
 	int m_trump_suit_of_current_game;
+	int m_trump_card_id;
+	int m_round_score;
 };
