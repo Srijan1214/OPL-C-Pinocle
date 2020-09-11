@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <climits>
 
 #include "card.h"
 
@@ -33,4 +34,7 @@ class Player {
 	int m_trump_suit_of_current_game;
 	int m_trump_card_id;
 	int m_round_score;
+	int Find_Index_Of_Card_To_Throw();
+
+	std::vector<std::vector<int>> Get_Cards_Needed_For_Meld_Vector();
 };

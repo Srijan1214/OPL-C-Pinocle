@@ -102,7 +102,9 @@ int Player::Get_Meld_Type_From_Cards(std::vector<Card*>& a_meld_card_list) {
 				return 1;
 			} else {
 				// regular marriage
-				return 2;
+				if(first_suit == second_suit){
+					return 2;
+				}
 			}
 		}
 		// If not a marriage then can be a Pinochle
@@ -199,4 +201,186 @@ std::string Player::Get_Console_Message() {
 	}
 	message+="\n";
 	return message;
+}
+
+std::vector<std::vector<int>> Player::Get_Cards_Needed_For_Meld_Vector() {
+	std::vector<int> flush_requirements = {m_trump_suit_of_current_game * 6 + 1,
+								 m_trump_suit_of_current_game * 6 + 2,
+								 m_trump_suit_of_current_game * 6 + 3,
+								 m_trump_suit_of_current_game * 6 + 4,
+								 m_trump_suit_of_current_game * 6 + 5};
+	std::vector<int> royal_marriage_requirements = {m_trump_suit_of_current_game * 6 + 3,
+										  m_trump_suit_of_current_game * 6 + 4};
+	std::vector<int> spades_marriage_requirements = {6 * 0 + 3, 6 * 0 + 4};
+	std::vector<int> clubs_marriage_requirements = {6 * 1 + 3, 6 * 1 + 4};
+	std::vector<int> hearts_marriage_requirements = {6 * 2 + 3, 6 * 2 + 4};
+	std::vector<int> diamonds_marriage_requirements = {6 * 3 + 3, 6 * 3 + 4};
+
+	std::vector<int> dix_requirements = {6 * m_trump_suit_of_current_game + 0};
+	std::vector<int> four_aces_requirements = {5, 5 + 6, 5 + 12, 5 + 18};
+	std::vector<int> four_kings_requirements = {4, 4 + 6, 4 + 12, 4 + 18};
+	std::vector<int> four_queens_requirements = {3, 3 + 6, 3 + 12, 3 + 18};
+	std::vector<int> four_jacks_requirements = {2, 2 + 6, 2 + 12, 2 + 18};
+
+	std::vector<int> pinochle_requirements = {2 + 6 * 3, 3 + 6 * 0};
+
+	std::vector<std::vector<int>> all_requirements = {
+		flush_requirements,
+		royal_marriage_requirements,
+		spades_marriage_requirements,
+		clubs_marriage_requirements,
+		hearts_marriage_requirements,
+		diamonds_marriage_requirements,
+		dix_requirements,
+		four_aces_requirements,
+		four_kings_requirements,
+		four_queens_requirements,
+		four_jacks_requirements,
+		pinochle_requirements};
+
+	std::vector<std::vector<int>> cards_needed_for_meld(12, std::vector<int>(24,-1));
+	int i = 0;
+	for(std::vector<int> &requirements: all_requirements) {
+		for(int& index: requirements) {
+			cards_needed_for_meld[i][index] = 0;
+		}
+		i++;
+	}
+
+	return cards_needed_for_meld;
+}
+
+int Player::Find_Index_Of_Card_To_Throw() {
+	std::vector<std::vector<int>> cards_needed_for_meld = Get_Cards_Needed_For_Meld_Vector();
+	// Finds out if which card is thrown. The highest meld is gotten.
+	int ret_val = -1;
+
+
+	auto TO9 = [](int a_index){
+		if(a_index < 2) {
+			return a_index;
+		} else if (a_index >= 2 && a_index <= 5) {
+			return 2;
+		} else {
+			return a_index - 3;
+		}
+	};
+
+	for(Card* card_ptr: m_hand_card_pile) {
+		for(int i = 0; i < 12; i ++) {
+			if (m_which_card_used_for_meld[TO9(i)][card_ptr->Get_Card_Id()] == false) {
+				int& ele = cards_needed_for_meld[i][card_ptr->Get_Card_Id()/2];
+				if(ele >=0 ) {
+					ele++;
+				}
+			}
+		}
+	}
+
+	for(Card* card_ptr: m_meld_card_pile) {
+		for(int i = 0; i < 12; i ++) {
+			if (m_which_card_used_for_meld[TO9(i)][card_ptr->Get_Card_Id()] == false) {
+				int& ele = cards_needed_for_meld[i][card_ptr->Get_Card_Id()/2];
+				if(ele >=0 ) {
+					ele++;
+				}
+			}
+		}
+	}
+
+	int which_hand_pile_card_to_throw = -1;
+	int which_meld_pile_card_to_throw = -1;
+	int max_meld_score = INT_MIN;
+	int meld_number_played = -1;
+
+	int index = 0;
+	for(Card* card_ptr: m_hand_card_pile) {
+		std::vector<std::vector<int>> temp_vector = cards_needed_for_meld;
+		for (int i = 0; i < 12; i++) {
+			if (m_which_card_used_for_meld[TO9(i)][card_ptr->Get_Card_Id()] == false) {
+				int& ele =
+					temp_vector[i][card_ptr->Get_Card_Id() / 2];
+				if (ele > 0) {
+					ele--;
+				}
+			}
+		}
+		for (int i = 0; i < 12; i++) {
+			for(int j = 0; j < 24; j++) {
+				int& ele = temp_vector[i][j];
+				if (ele == 0) {
+					break;
+				}
+				if(j == 23) { // if no 0's are found in the array then the meld is possible.
+					int cur_score = m_meld_scores[TO9(i)];
+					if(cur_score > max_meld_score) {
+						which_hand_pile_card_to_throw = index;
+						max_meld_score = cur_score;
+						meld_number_played = TO9(i);
+					}else if (cur_score == max_meld_score) {
+						if(which_hand_pile_card_to_throw == -1 || card_ptr->Get_Suit() == m_trump_suit_of_current_game) {
+							which_hand_pile_card_to_throw = index;
+							max_meld_score = cur_score;
+							meld_number_played = TO9(i);
+						}
+					}
+				}
+			}
+		}
+		index++;
+	}
+
+	for(Card* card_ptr: m_meld_card_pile) {
+		std::vector<std::vector<int>> temp_vector = cards_needed_for_meld;
+		for (int i = 0; i < 12; i++) {
+			if (m_which_card_used_for_meld[TO9(i)][card_ptr->Get_Card_Id()] == false) {
+				int& ele =
+					temp_vector[i][card_ptr->Get_Card_Id() / 2];
+				if (ele > 0) {
+					ele--;
+				}
+			}
+		}
+		for (int i = 0; i < 12; i++) {
+			for(int j = 0; j < 24; j++) {
+				int& ele = temp_vector[i][j];
+				if (ele == 0) {
+					break;
+				}
+				if(j == 23) { // if no 0's are found in the array then the meld is possible.
+					int cur_score = m_meld_scores[TO9(i)];
+					if(cur_score > max_meld_score) {
+						which_meld_pile_card_to_throw = index;
+						which_hand_pile_card_to_throw = -1;
+						max_meld_score = cur_score;
+						meld_number_played = TO9(i);
+					}else if (cur_score == max_meld_score) {
+						if(which_meld_pile_card_to_throw == -1 || card_ptr->Get_Suit() == m_trump_suit_of_current_game) {
+							which_meld_pile_card_to_throw = index;
+							which_hand_pile_card_to_throw = -1;
+							max_meld_score = cur_score;
+							meld_number_played = TO9(i);
+						}
+					}
+				}
+			}
+		}
+		index++;
+	}
+	std::string meld_names[9] = {"flush",		 "Royal Marriage", "Marriage",
+							  "Dix",		 "Four Aces",	   "Four Kings",
+							  "Four Queens", "Four Jacks",	   "Pinochle"};
+	if(meld_number_played >=0 && meld_number_played <9) {
+		std::cout << "Max Meld Score if this is played: " << max_meld_score << std::endl;
+		std::cout << "Best Meld available: " << meld_names[meld_number_played] << std::endl;
+	} else {
+		std::cout << "No Melds will be possible for your cards." << std::endl;
+	}
+	if(which_hand_pile_card_to_throw == -1) {
+		return which_meld_pile_card_to_throw + m_hand_card_pile.size();
+	} else if (which_meld_pile_card_to_throw == -1) {
+		return which_hand_pile_card_to_throw;
+	}
+	
+	return ret_val;
 }

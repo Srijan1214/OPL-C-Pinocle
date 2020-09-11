@@ -47,6 +47,12 @@ Card* Human::Get_Card_To_Play(Card* a_lead_card_played) {
 
 	do {
 		Print_Hand_and_Meld_With_Id();
+		int index_of_card = Find_Index_Of_Card_To_Throw();
+		if(index_of_card < m_hand_card_pile.size()){
+			std::cout << "Recommended Card From Hand Pile: " << index_of_card << std::endl;
+		}else {
+			std::cout << "Recommended Card From Meld Pile: " << index_of_card - m_hand_card_pile.size() << std::endl;
+		}
 		std::cout << "Enter index of Cards From Above: ";
 		index = Get_Integer_Input_From_User();
 	} while (!(index >= 0 && index <= total_cards) || std::cin.fail());
