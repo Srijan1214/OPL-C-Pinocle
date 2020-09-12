@@ -47,11 +47,14 @@ Card* Human::Get_Card_To_Play(Card* a_lead_card_played) {
 
 	do {
 		Print_Hand_and_Meld_With_Id();
-		int index_of_card = Find_Index_Of_Card_To_Throw();
-		if(index_of_card < m_hand_card_pile.size()){
-			std::cout << "Recommended Card From Hand Pile: " << index_of_card << std::endl;
-		}else {
-			std::cout << "Recommended Card From Meld Pile: " << index_of_card - m_hand_card_pile.size() << std::endl;
+		std::pair<int,int> recommended_card_with_best_meld = Find_IndexMeldPair_Of_Card_To_Throw();
+		int & best_card_index = recommended_card_with_best_meld.first;
+		int & best_meld_index = recommended_card_with_best_meld.second;
+		if(best_card_index != -1) {
+			std::cout << "Recommended Card Index: " << best_card_index << std::endl;
+			std::cout << "Best Meld Availabe: " << m_meld_names[recommended_card_with_best_meld.second] << std::endl;
+		} else {
+			std::cout << "No Meld will be available after this. Play highest card." << std::endl;
 		}
 		std::cout << "Enter index of Cards From Above: ";
 		index = Get_Integer_Input_From_User();
@@ -117,7 +120,25 @@ int Human::Get_Meld_To_Play() {
 	}
 	do {
 		Print_Hand_and_Meld_With_Id();
+		std::pair<std::vector<int>,int> recommended_meld_with_ids = Get_Best_Meld_Cards();
 
+		int recommended_meld_number = recommended_meld_with_ids.second;
+		if(recommended_meld_number>=0 && recommended_meld_number < 9){
+			std::cout << "I recommend you present";
+			for(int i = 0; i < recommended_meld_with_ids.first.size(); i++) {
+				if(i != 0) {
+					if(i == recommended_meld_with_ids.first.size()-1) {
+						std::cout << " and";
+					}else {
+						std::cout << ",";
+					}
+				}
+				std::cout << " " << Card::Get_String_From_Id(recommended_meld_with_ids.first[i]);
+			}
+			std::cout << " as a \"" << m_meld_names[recommended_meld_number] << "\" meld to earn "<< m_meld_scores[recommended_meld_number] <<" points." << std::endl;
+		} else {
+			std::cout << "No Meld is possible here." << std::endl;
+		}
 		std::string user_meld_input;
 		std::cout << "Enter the sequences of indexes separated by a space (e.g 1 2 3): ";
 		std::cin.clear();
