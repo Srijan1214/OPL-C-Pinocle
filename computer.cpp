@@ -1,10 +1,5 @@
 #include "computer.h"
 
-std::vector<Card*> Computer::Ask_For_Meld_Cards () {
-	std::vector<Card*> ret_vec;
-	return ret_vec;
-}
-
 Card* Computer::Get_Card_To_Play(Card* a_lead_card_played) {
 	int index;
 	if (a_lead_card_played == NULL) {
@@ -164,7 +159,7 @@ int Computer::Get_Meld_To_Play() {
 			}
 			std::cout << " " << Card::Get_String_From_Id(recommended_meld_with_ids.first[i]);
 		}
-		std::cout << " as a \"" << m_meld_names[recommended_meld_number] << "\" meld to earn "<< m_meld_scores[recommended_meld_number] <<" points." << std::endl
+		std::cout << " as a \"" << m_meld_names[recommended_meld_number] << "\" meld to earn "<< m_meld_scores[recommended_meld_number] <<" points." << std::endl;
 		return recommended_meld_number;
 	} else {
 		std::cout << "Computer found no possible melds. So, it did not play any." << std::endl;

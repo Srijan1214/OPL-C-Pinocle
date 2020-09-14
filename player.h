@@ -22,7 +22,6 @@ class Player {
 	static const int m_meld_scores[9];
 	static const std::string m_meld_names[9];
 
-	virtual std::vector<Card*> Ask_For_Meld_Cards() = 0;
 	virtual Card* Get_Card_To_Play(Card* a_lead_card_played) = 0; // Argument is NULL if the current player is lead player.
 	virtual int Get_Meld_To_Play() = 0;
 

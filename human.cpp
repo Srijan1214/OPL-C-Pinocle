@@ -2,11 +2,6 @@
 
 Human::Human() {}
 
-std::vector<Card*> Human::Ask_For_Meld_Cards() {
-	int id = 0;
-	return {m_hand_card_pile[id]};
-}
-
 const char Human::Get_Heads_Or_Tails() const { return 'H'; }
 
 void Human::Print_Hand_and_Meld_With_Id() {
