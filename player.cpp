@@ -247,11 +247,13 @@ std::vector<std::vector<int>> Player::Get_Meld_Logic_Vector() {
 		four_jacks_requirements,
 		pinochle_requirements};
 
-	std::vector<std::vector<int>> meld_logic_vector(12, std::vector<int>(24,-1));
+	std::vector<std::vector<int>> meld_logic_vector(12, std::vector<int>(48,-1));
 	int i = 0;
 	for(std::vector<int> &requirements: all_requirements) {
 		for(int& index: requirements) {
-			meld_logic_vector[i][index] = 0;
+			// Two cards needed are sequentially stored.
+			meld_logic_vector[i][index*2] = 0;
+			meld_logic_vector[i][index*2 + 1] = 0;
 		}
 		i++;
 	}
@@ -273,7 +275,7 @@ void Player::add_to_meld_logic_vector(std::vector<std::vector<int>>& a_meld_logi
 	for(Card* card_ptr: a_card_pile) {
 		for(int i = 0; i < 12; i ++) {
 			if (m_which_card_used_for_meld[TO9(i)][card_ptr->Get_Card_Id()] == false) {
-				int& ele = a_meld_logic_vector[i][card_ptr->Get_Card_Id()/2];
+				int& ele = a_meld_logic_vector[i][card_ptr->Get_Card_Id()];
 				if(ele >=0 ) {
 					ele++;
 				}
@@ -291,19 +293,21 @@ int Player::Get_Best_Meld_If_Card_Thrown(
 	for (int i = 0; i < 12; i++) {
 		if (m_which_card_used_for_meld[TO9(i)][a_card_ptr->Get_Card_Id()] ==
 			false) {
-			int& ele = temp_vector[i][a_card_ptr->Get_Card_Id() / 2];
+			int& ele = temp_vector[i][a_card_ptr->Get_Card_Id()];
 			if (ele > 0) {
 				ele--;
 			}
 		}
 	}
 	for (int i = 0; i < 12; i++) {
-		for (int j = 0; j < 24; j++) {
-			int& ele = temp_vector[i][j];
-			if (ele == 0) {
+		for (int j = 0; j < 48; j++) {
+			int& ele1 = temp_vector[i][j];
+			j++;
+			int& ele2 = temp_vector[i][j];
+			if (ele1 == 0 && ele2 == 0) {
 				break;
 			}
-			if (j == 23) {	// if no 0's are found in the array then the meld is
+			if (j == 47) {	// if no 0's are found in the array then the meld is
 							// possible.
 				int cur_score = m_meld_scores[TO9(i)];
 				if (cur_score > max_meld_score) {
@@ -420,12 +424,14 @@ std::pair<std::vector<int>, int> Player::Get_Best_Meld_Cards() {
 	int meld_number_played = -1;
 
 	for (int i = 0; i < 12; i++) {
-		for (int j = 0; j < 24; j++) {
-			int& ele = meld_logic_vector[i][j];
-			if (ele == 0) {
+		for (int j = 0; j < 48; j++) {
+			int& ele1 = meld_logic_vector[i][j];
+			j++;
+			int& ele2 = meld_logic_vector[i][j];
+			if (ele1 == 0 && ele2 == 0) {
 				break;
 			}
-			if (j == 23) {	// if no 0's are found in the array then the meld is
+			if (j == 47) {	// if no 0's are found in the array then the meld is
 							// possible.
 				int cur_meld_score = m_meld_scores[TO9(i)];
 				if(cur_meld_score > max_meld_score) {
@@ -440,16 +446,39 @@ std::pair<std::vector<int>, int> Player::Get_Best_Meld_Cards() {
 		return {{},-1};
 	} else {
 		std::vector<int> return_vector;
-		for (int j = 0; j < 24; j++) {
+		for (int j = 0; j < 48; j++) {
 			int& ele = meld_logic_vector[meld_number_played][j];
-			if (ele != -1) {
-				return_vector.push_back(j*2);
+			if (ele > 0) {
+				return_vector.push_back(j);
 			}
 		}
 		return {return_vector, TO9(meld_number_played)};
 	}
 }
 
-// std::vector<Card*> Player::Get_Vector_of_Best_Card_Based_On_Logic_Vector(std::vector<std::vector<int>>& a_meld_logic_vector) {
+int Player::Find_Index_In_Pile_From_Card_Id(int a_id) {
+	const size_t& hand_pile_size = m_hand_card_pile.size();
 
-// }
+	for(int i = 0; i < hand_pile_size; i++) {
+		if(m_hand_card_pile[i]->Get_Card_Id() == a_id) {
+			return i;
+		}
+	}
+
+	for(int i = 0; i < m_meld_card_pile.size(); i++) {
+		if(m_meld_card_pile[i]->Get_Card_Id() == a_id) {
+			return (i + hand_pile_size);
+		}
+	}
+
+	return -1;
+}
+
+int Player::Get_Card_Weight(Card* card_ptr) {
+	int face_weight = card_ptr->Get_Card_Weight();
+	if(card_ptr->Get_Suit() == m_trump_suit_of_current_game) {
+		// add a big number to face weight.
+		return face_weight + 100;
+	}
+	return face_weight;
+}

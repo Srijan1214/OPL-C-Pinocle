@@ -106,8 +106,8 @@ int Human::Get_Meld_To_Play() {
 	int meld_number = -1;
 
 	std::vector<int> user_input_indexes;
-	std::vector<int> hand_pile_user_selection_ids;
-	std::vector<int> meld_pile_user_selection_ids;
+	std::vector<int> hand_pile_user_selection_indexes;
+	std::vector<int> meld_pile_user_selection_indexes;
 	do{
 		std::cout << "Do you want to meld this round (y/n)? ";
 		meld_yes_no = Get_Char_Input_From_User();
@@ -151,19 +151,19 @@ int Human::Get_Meld_To_Play() {
 
 		for(int& ele: user_input_indexes) {
 			if (ele < m_hand_card_pile.size()) {
-				hand_pile_user_selection_ids.push_back(ele);
+				hand_pile_user_selection_indexes.push_back(ele);
 			}else {
-				meld_pile_user_selection_ids.push_back(ele - m_hand_card_pile.size());
+				meld_pile_user_selection_indexes.push_back(ele - m_hand_card_pile.size());
 			}
 		}
 
 		std::vector<Card*> meld_cards;
 
-		for(int& ele: hand_pile_user_selection_ids) {
+		for(int& ele: hand_pile_user_selection_indexes) {
 			meld_cards.push_back(m_hand_card_pile[ele]);
 		}
 
-		for(int& ele: meld_pile_user_selection_ids) {
+		for(int& ele: meld_pile_user_selection_indexes) {
 			meld_cards.push_back(m_meld_card_pile[ele]);
 		}
 
@@ -172,16 +172,16 @@ int Human::Get_Meld_To_Play() {
 			Update_Meld_History(meld_cards,meld_number);
 
 			// sorting is necessary for deletion
-			std::sort(hand_pile_user_selection_ids.begin(),hand_pile_user_selection_ids.end()); 
-			for(int i = hand_pile_user_selection_ids.size() - 1; i >=0; i--) {
-				m_hand_card_pile[hand_pile_user_selection_ids[i]] = m_hand_card_pile.back();
+			std::sort(hand_pile_user_selection_indexes.begin(),hand_pile_user_selection_indexes.end()); 
+			for(int i = hand_pile_user_selection_indexes.size() - 1; i >=0; i--) {
+				m_hand_card_pile[hand_pile_user_selection_indexes[i]] = m_hand_card_pile.back();
 				m_hand_card_pile.pop_back();
 			}
 
 			// sorting is necessary for deletion
-			std::sort(meld_pile_user_selection_ids.begin(),meld_pile_user_selection_ids.end()); 
-			for(int i = meld_pile_user_selection_ids.size() - 1; i >=0; i--) {
-				m_meld_card_pile[meld_pile_user_selection_ids[i]] = m_meld_card_pile.back();
+			std::sort(meld_pile_user_selection_indexes.begin(),meld_pile_user_selection_indexes.end()); 
+			for(int i = meld_pile_user_selection_indexes.size() - 1; i >=0; i--) {
+				m_meld_card_pile[meld_pile_user_selection_indexes[i]] = m_meld_card_pile.back();
 				m_meld_card_pile.pop_back();
 			}
 
@@ -203,8 +203,8 @@ int Human::Get_Meld_To_Play() {
 		}
 
 		user_input_indexes.clear();
-		hand_pile_user_selection_ids.clear();
-		meld_pile_user_selection_ids.clear();
+		hand_pile_user_selection_indexes.clear();
+		meld_pile_user_selection_indexes.clear();
 		std::cout << std::endl;
 
 

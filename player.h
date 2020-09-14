@@ -37,6 +37,7 @@ class Player {
 	int m_trump_suit_of_current_game;
 	int m_trump_card_id;
 	int m_round_score;
+
 	std::pair<int,int> Find_IndexMeldPair_Of_Card_To_Throw();
 
 	std::vector<std::vector<int>> Get_Meld_Logic_Vector();
@@ -46,5 +47,7 @@ class Player {
 	std::pair<int,int> Get_Best_MeldCardIndexPair_From_Pile(std::vector<std::vector<int>>& a_meld_logic_vector, std::vector<Card*> a_card_pile);
 
 	std::pair<std::vector<int>,int> Get_Best_Meld_Cards();
-	std::pair<std::vector<int>,int> Get_Vector_of_Best_Card_Based_On_Logic_Vector(std::vector<std::vector<int>>& a_meld_logic_vector);
+	int Find_Index_In_Pile_From_Card_Id(int a_id);
+
+	int Get_Card_Weight(Card* card_ptr);
 };
