@@ -482,3 +482,77 @@ int Player::Get_Card_Weight(Card* card_ptr) {
 	}
 	return face_weight;
 }
+
+int Player::Find_Index_of_Smallest_Card_Greater_Than_Card(Card* a_card_ptr) {
+	const int& hand_pile_size = m_hand_card_pile.size();
+	const int& meld_pile_size = m_meld_card_pile.size();
+
+	int argument_card_weight = Get_Card_Weight(a_card_ptr);
+	int index = -1;
+	int min_greatest_card_weight = INT_MAX;
+	for (int i = 0; i < hand_pile_size; i++) {
+		int cur_card_weight = Get_Card_Weight(m_hand_card_pile[i]);
+		if(cur_card_weight > argument_card_weight && cur_card_weight < min_greatest_card_weight) {
+			index = i;
+			min_greatest_card_weight = cur_card_weight;
+		}
+	}
+	
+	for (int i = 0; i < meld_pile_size; i++) {
+		int cur_card_weight = Get_Card_Weight(m_meld_card_pile[i]);
+		if(cur_card_weight > argument_card_weight && cur_card_weight < min_greatest_card_weight) {
+			index = i + hand_pile_size;
+			min_greatest_card_weight = cur_card_weight;
+		}
+	}
+
+	return index;
+}
+
+int Player::Find_Index_Of_Smallest_Card() {
+	const int& hand_pile_size = m_hand_card_pile.size();
+	const int& meld_pile_size = m_meld_card_pile.size();
+
+	int min_card_weight = INT_MAX;
+	int index =-1;
+	for(int i = 0; i < hand_pile_size; i++) {
+		int cur_card_weight = Get_Card_Weight(m_hand_card_pile[i]);
+		if(cur_card_weight < min_card_weight) {
+			index = i;
+			min_card_weight = cur_card_weight;
+		}
+	}
+	for(int i = 0; i < meld_pile_size; i++) {
+		int cur_card_weight = Get_Card_Weight(m_meld_card_pile[i]);
+		if(cur_card_weight < min_card_weight) {
+			index = i;
+			min_card_weight = cur_card_weight;
+		}
+	}
+
+	return index;
+}
+
+int Player::Find_Index_Of_Greatest_Card() {
+	const int& hand_pile_size = m_hand_card_pile.size();
+	const int& meld_pile_size = m_meld_card_pile.size();
+
+	int max_card_weight = INT_MIN;
+	int index =-1;
+	for(int i = 0; i < hand_pile_size; i++) {
+		int cur_card_weight = Get_Card_Weight(m_hand_card_pile[i]);
+		if(cur_card_weight > max_card_weight) {
+			index = i;
+			max_card_weight = cur_card_weight;
+		}
+	}
+	for(int i = 0; i < meld_pile_size; i++) {
+		int cur_card_weight = Get_Card_Weight(m_meld_card_pile[i]);
+		if(cur_card_weight > max_card_weight) {
+			index = i;
+			max_card_weight = cur_card_weight;
+		}
+	}
+
+	return index;
+}

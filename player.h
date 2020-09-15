@@ -49,4 +49,9 @@ class Player {
 	int Find_Index_In_Pile_From_Card_Id(int a_id);
 
 	int Get_Card_Weight(Card* card_ptr);
+
+	// Utilities
+	int Find_Index_of_Smallest_Card_Greater_Than_Card(Card* card_ptr);
+	int Find_Index_Of_Smallest_Card();
+	int Find_Index_Of_Greatest_Card();
 };
