@@ -3,6 +3,7 @@
 #include <vector>
 #include <algorithm>
 #include <climits>
+#include <array>
 
 #include "card.h"
 
@@ -27,11 +28,14 @@ class Player {
 
    protected:
 	std::vector<Card*> m_hand_card_pile;
-	std::vector<Card*> m_meld_card_pile;
+	std::vector<std::vector<std::array<int,3>>> m_hand_meld_involvement_list;
+	std::vector<std::vector<std::vector<int>>> m_current_meld_cards;
+	void Remove_Card_From_Pile(int index);
+
 	std::vector<Card*> m_capture_card_pile;
 	std::vector<int> m_no_of_times_meld_has_been_played;
 	std::vector<std::vector<bool>> m_which_card_used_for_meld;
-	int Get_Meld_Type_From_Cards(std::vector<Card*> &);
+	int Get_Meld_Type_12_From_Cards(std::vector<Card*> &);
 	bool Is_Meld_Valid(std::vector<Card*> &);
 	int m_trump_suit_of_current_game;
 	int m_trump_card_id;

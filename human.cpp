@@ -5,40 +5,56 @@ Human::Human() {}
 const char Human::Get_Heads_Or_Tails() const { return 'H'; }
 
 void Human::Print_Hand_and_Meld_With_Id() {
-	int total_cards = m_hand_card_pile.size() + m_meld_card_pile.size();
+	std::string index_string = "";
+	std::string cards_string = "";
 
-	std::cout << "TRUMP:   " << Card::Get_String_From_Id(m_trump_card_id) << std::endl;
+	index_string += "Index:       ";
+	cards_string += "Hand-Pile:   ";
 
-	std::cout << "INDEX:   ";
-	for (int i = 0; i < total_cards; i++) {
-		std::cout << i;
-		if (i == m_hand_card_pile.size() - 1) {
-			std::cout << "              ";
+	for(int i = 0; i < m_hand_card_pile.size(); i++) {
+		if(m_hand_meld_involvement_list[i].empty()) {
+			// std::cout << m_hand_card_pile[i]->Get_Card_String_Value() << " ";
+			index_string += (std::to_string(i) + "  "); 
+			cards_string += m_hand_card_pile[i]->Get_Card_String_Value() + " ";
+			if(i >= 10) {
+				cards_string += " ";
+			}
 		}
-		if (i < 10) {
-			std::cout << "   ";
-		} else {
-			std::cout << "  ";
+	}
+
+	// std::cout << "Melds: " << std::endl;
+	index_string += "        ";
+	cards_string += "Melds:  ";
+
+	for(int i = 0; i < m_current_meld_cards.size(); i++) {
+		for(auto& current_melds: m_current_meld_cards[i]) {
+			for(int& hand_index: current_melds) {
+				// std::cout << m_hand_card_pile[hand_index]->Get_Card_String_Value();
+				index_string += (std::to_string(hand_index) + " "); 
+				cards_string += m_hand_card_pile[hand_index]->Get_Card_String_Value();
+				if(m_hand_meld_involvement_list[hand_index].size() > 1) {
+					// std::cout << "*";
+					index_string += " ";
+					cards_string += "*";
+				}
+				if(hand_index >= 10) {
+					index_string+= " ";
+				}
+				// std::cout << " ";
+				index_string += " "; 
+				cards_string += " ";
+			}
 		}
 	}
-	std::cout << std::endl;
-	std::cout << "CARD:    ";
-	for (Card* card_ptr : m_hand_card_pile) {
-		std::cout << card_ptr->Get_Card_String_Value() << "  ";
-	}
-	std::cout << "  Meld Cards: ";
-
-	for (Card* card_ptr : m_meld_card_pile) {
-		std::cout << card_ptr->Get_Card_String_Value() << "  ";
-	}
-
+	std::cout << index_string << std::endl;
+	std::cout << cards_string << std::endl;
 	std::cout << std::endl;
 	std::cout << std::endl;
 }
 
 Card* Human::Get_Card_To_Play(Card* a_lead_card_played) {
 	int index = -1;
-	int total_cards = m_hand_card_pile.size() + m_meld_card_pile.size();
+	int total_cards = m_hand_card_pile.size();
 
 	do {
 		Print_Computer_Card_Recomendation(a_lead_card_played);
@@ -48,16 +64,8 @@ Card* Human::Get_Card_To_Play(Card* a_lead_card_played) {
 	} while (!(index >= 0 && index <= total_cards) || std::cin.fail());
 	std::cout << std::endl;
 
-	Card* ret_card;
-
-	if(index < m_hand_card_pile.size()){
-		ret_card = m_hand_card_pile[index];
-		m_hand_card_pile.erase(m_hand_card_pile.begin() + index);
-	} else {
-		index-= m_hand_card_pile.size();
-		ret_card = m_meld_card_pile[index];
-		m_meld_card_pile.erase(m_meld_card_pile.begin() + index);
-	}
+	Card* ret_card = m_hand_card_pile[index];
+	Remove_Card_From_Pile(index);
 	return ret_card;
 }
 
@@ -76,7 +84,7 @@ std::vector<int> Human::Parse_Indexes_Vector_From_String(std::string a_user_inpu
 
 		}
 		if (insert_val >= 0 &&
-			insert_val < (m_hand_card_pile.size() + m_meld_card_pile.size())){
+			insert_val < (m_hand_card_pile.size())){
 			u_set.insert(insert_val);
 		}
 	}
@@ -90,11 +98,10 @@ std::vector<int> Human::Parse_Indexes_Vector_From_String(std::string a_user_inpu
 int Human::Get_Meld_To_Play() {
 	std::string user_line_input;
 	char meld_yes_no;
-	int meld_number = -1;
+	int meld_number_9 = -1;
 
 	std::vector<int> user_input_indexes;
 	std::vector<int> hand_pile_user_selection_indexes;
-	std::vector<int> meld_pile_user_selection_indexes;
 	do{
 		std::cout << "Do you want to meld this round (y/n)? ";
 		meld_yes_no = Get_Char_Input_From_User();
@@ -108,9 +115,6 @@ int Human::Get_Meld_To_Play() {
 	do {
 		Print_Computer_Meld_Recommendation();
 		Print_Hand_and_Meld_With_Id();
-		std::pair<std::vector<int>,int> recommended_meld_with_ids = Get_Best_Meld_Cards();
-
-		int recommended_meld_number = recommended_meld_with_ids.second;
 
 		std::string user_meld_input;
 		std::cout << "Enter the sequences of indexes separated by a space (e.g 1 2 3): ";
@@ -123,11 +127,7 @@ int Human::Get_Meld_To_Play() {
 
 
 		for(int& ele: user_input_indexes) {
-			if (ele < m_hand_card_pile.size()) {
-				hand_pile_user_selection_indexes.push_back(ele);
-			}else {
-				meld_pile_user_selection_indexes.push_back(ele - m_hand_card_pile.size());
-			}
+			hand_pile_user_selection_indexes.push_back(ele);
 		}
 
 		std::vector<Card*> meld_cards;
@@ -136,35 +136,22 @@ int Human::Get_Meld_To_Play() {
 			meld_cards.push_back(m_hand_card_pile[ele]);
 		}
 
-		for(int& ele: meld_pile_user_selection_indexes) {
-			meld_cards.push_back(m_meld_card_pile[ele]);
-		}
+		int meld_number_12 = Get_Meld_Type_12_From_Cards(meld_cards); 
+		meld_number_9 = TO9(meld_number_12);
+		if (meld_number_9 >= 0 && meld_number_9 < 9 && Is_Meld_Valid(meld_cards)) {
+			Update_Meld_History(meld_cards,meld_number_9);
 
-		meld_number = Get_Meld_Type_From_Cards(meld_cards);
-		if (meld_number >= 0 && meld_number < 9 && Is_Meld_Valid(meld_cards)) {
-			Update_Meld_History(meld_cards,meld_number);
-
-			// sorting is necessary for deletion
-			std::sort(hand_pile_user_selection_indexes.begin(),hand_pile_user_selection_indexes.end()); 
-			for(int i = hand_pile_user_selection_indexes.size() - 1; i >=0; i--) {
-				m_hand_card_pile[hand_pile_user_selection_indexes[i]] = m_hand_card_pile.back();
-				m_hand_card_pile.pop_back();
+			// meld is valid so update the hand to meld involvement
+			for(int i = 0; i < hand_pile_user_selection_indexes.size(); i++) {
+				int& index = hand_pile_user_selection_indexes[i];
+				int number_of_similar_melds = m_current_meld_cards[meld_number_12].size();
+				m_hand_meld_involvement_list[index].push_back({meld_number_12, number_of_similar_melds, i});
 			}
 
-			// sorting is necessary for deletion
-			std::sort(meld_pile_user_selection_indexes.begin(),meld_pile_user_selection_indexes.end()); 
-			for(int i = meld_pile_user_selection_indexes.size() - 1; i >=0; i--) {
-				m_meld_card_pile[meld_pile_user_selection_indexes[i]] = m_meld_card_pile.back();
-				m_meld_card_pile.pop_back();
-			}
+			m_current_meld_cards[meld_number_12].push_back(hand_pile_user_selection_indexes);
 
-			// add cards to the meld pile after removing the them from hand and meld pile.
-			// this ensures protection from duplicate adding to the meld pile.
-			for(Card* card_ptr: meld_cards) {
-				m_meld_card_pile.push_back(card_ptr);
-			}
 		} else {
-			meld_number = 9;
+			meld_number_9 = 9;
 			do{
 				std::cout << "The Meld is not valid. Do you still want to meld (y/n)? ";
 				meld_yes_no = Get_Char_Input_From_User();
@@ -177,13 +164,12 @@ int Human::Get_Meld_To_Play() {
 
 		user_input_indexes.clear();
 		hand_pile_user_selection_indexes.clear();
-		meld_pile_user_selection_indexes.clear();
 		std::cout << std::endl;
 
 
-	} while (!(meld_number >= 0 && meld_number < 9));
+	} while (!(meld_number_9 >= 0 && meld_number_9 < 9));
 
-	return meld_number;
+	return meld_number_9;
 }
 
 int Human::Get_Integer_Input_From_User() {
@@ -229,17 +215,13 @@ void Human::Print_Computer_Card_Recomendation(Card* a_lead_card_played) {
 		if(best_card_index != -1) {
 			// meld is possible if best card is thrown
 			index = best_card_index;
-			int id;
-			if(index < m_hand_card_pile.size()) id = m_hand_card_pile[index]->Get_Card_Id();
-			else id = m_meld_card_pile[index - m_hand_card_pile.size()]->Get_Card_Id();
+			int id = m_hand_card_pile[index]->Get_Card_Id();
 			std::cout << "I recommend you play " << "\"" << Card::Get_String_From_Id(id) << "\"" << " because it is the card resulting in the highest possible meld." << std::endl;
 		} else {
 			// no meld is possible from any card thrown
 			// throw the greatest card to maximize winning chances
 			index = Find_Index_Of_Greatest_Card();
-			int id;
-			if(index < m_hand_card_pile.size()) id = m_hand_card_pile[index]->Get_Card_Id();
-			else id = m_meld_card_pile[index - m_hand_card_pile.size()]->Get_Card_Id();
+			int id = m_hand_card_pile[index]->Get_Card_Id();
 			std::cout << "I recommend you play " << "\"" << Card::Get_String_From_Id(id) << "\"" << ", which is the greatest card, because you have no melds possible available." << std::endl;
 		}
 	} else {
@@ -247,14 +229,10 @@ void Human::Print_Computer_Card_Recomendation(Card* a_lead_card_played) {
 		index = Find_Index_of_Smallest_Card_Greater_Than_Card(a_lead_card_played);
 		if(index == -1) {
 			index = Find_Index_Of_Smallest_Card();
-			int id;
-			if(index < m_hand_card_pile.size()) id = m_hand_card_pile[index]->Get_Card_Id();
-			else id = m_meld_card_pile[index - m_hand_card_pile.size()]->Get_Card_Id();
+			int id = m_hand_card_pile[index]->Get_Card_Id();
 			std::cout << "I recommend you play " << "\"" << Card::Get_String_From_Id(id) << "\"" << ", which is the smallest card, because you have no possibility of winning." << std::endl;
 		} else {
-			int id;
-			if(index < m_hand_card_pile.size()) id = m_hand_card_pile[index]->Get_Card_Id();
-			else id = m_meld_card_pile[index - m_hand_card_pile.size()]->Get_Card_Id();
+			int id = m_hand_card_pile[index]->Get_Card_Id();
 			std::cout << "I recommend you play " << "\"" << Card::Get_String_From_Id(id) << "\"" << " because it is the smallest card greater than the lead player's card." << std::endl;
 		}
 	}
@@ -264,7 +242,7 @@ void Human::Print_Computer_Card_Recomendation(Card* a_lead_card_played) {
 void Human::Print_Computer_Meld_Recommendation() {
 	std::pair<std::vector<int>,int> recommended_card_with_best_meld = Get_Best_Meld_Cards();
 
-	int& recommended_meld_number = recommended_card_with_best_meld.second;
+	int recommended_meld_number = TO9(recommended_card_with_best_meld.second);
 
 	if(recommended_meld_number != -1) {
 		std::cout << "I recommend you present";

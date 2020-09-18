@@ -120,12 +120,12 @@ void Round::Deal_Cards_From_Deck_To_Players() {
 	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < 4; j++) {
 			Card* card_to_give = m_deck.Pop_Top_Card();
-			m_players[0]->Give_Card_To_Player(card_to_give);
+			m_players[1]->Give_Card_To_Player(card_to_give);
 		}
 
 		for (int j = 0; j < 4; j++) {
 			Card* card_to_give = m_deck.Pop_Top_Card();
-			m_players[1]->Give_Card_To_Player(card_to_give);
+			m_players[0]->Give_Card_To_Player(card_to_give);
 		}
 	}
 }

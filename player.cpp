@@ -14,10 +14,12 @@ const std::string Player::m_meld_names[9] = {"Flush",
 Player::Player()
 	: m_no_of_times_meld_has_been_played(9, 0),
 	  m_which_card_used_for_meld(9, std::vector<bool>(48, false)),
+	  m_current_meld_cards(12),
 	  m_trump_suit_of_current_game(-1) {}
 
 void Player::Give_Card_To_Player(Card* a_card_ptr) {
 	m_hand_card_pile.push_back(a_card_ptr);
+	m_hand_meld_involvement_list.push_back({});
 }
 
 void Player::Add_Cards_To_Player_Capture_Pile(Card* a_card_ptr1,
@@ -27,7 +29,7 @@ void Player::Add_Cards_To_Player_Capture_Pile(Card* a_card_ptr1,
 }
 
 bool Player::Is_Meld_Valid(std::vector<Card*>& a_meld_card_list) {
-	int meld_number = Get_Meld_Type_From_Cards(a_meld_card_list);
+	int meld_number = TO9(Get_Meld_Type_12_From_Cards(a_meld_card_list));
 	if(meld_number < 0 && meld_number >= 9){ 
 		return false;
 	}
@@ -43,7 +45,7 @@ void Player::Set_Trump_card(int a_trump_card) {
 	m_trump_card_id = a_trump_card;
 }
 
-int Player::Get_Meld_Type_From_Cards(std::vector<Card*>& a_meld_card_list) {
+int Player::Get_Meld_Type_12_From_Cards(std::vector<Card*>& a_meld_card_list) {
 	// contains logic to detect if meld exists
 	std::vector<int> meld_card_identifiers(a_meld_card_list.size());
 	for (int i = 0; i < a_meld_card_list.size(); i++) {
@@ -106,21 +108,21 @@ int Player::Get_Meld_Type_From_Cards(std::vector<Card*>& a_meld_card_list) {
 			} else {
 				// regular marriage
 				if(first_suit == second_suit){
-					return 2;
+					return 2 + first_suit;
 				}
 			}
 		}
 		// If not a marriage then can be a Pinochle
 		if (first_face == 3 && second_face == 2 && first_suit == 0 &&
 			second_suit == 3) {
-				return 8;
+				return 11;
 		}
 	}else if(meld_card_identifiers.size() == 1) {
 		//dix
 		const int nine_face = Card::Get_Face_From_Id(meld_card_identifiers[0]);
 		const int nine_suit = Card::Get_Suit_From_Id(meld_card_identifiers[0]);
 		if(nine_face == 0 && nine_suit == m_trump_suit_of_current_game) {
-			return 3;
+			return 6;
 		}
 	} else if (meld_card_identifiers.size() == 4) {
 		const int first_face = Card::Get_Face_From_Id(meld_card_identifiers[0]);
@@ -140,26 +142,26 @@ int Player::Get_Meld_Type_From_Cards(std::vector<Card*>& a_meld_card_list) {
 			//four aces
 			if (first_face == 5 && second_face == 5 && third_face == 5 &&
 				fourth_face == 5) {
-				return 4;
+				return 7;
 			}
 			//four kings
 			if (first_face == 4 && second_face == 4 && third_face == 4 &&
 				fourth_face == 4) {
-				return 5;
+				return 8;
 			}
 			//four queens
 			if (first_face == 3 && second_face == 3 && third_face == 3 &&
 				fourth_face == 3) {
-				return 6;
+				return 9;
 			}
 			//four Jacks
 			if (first_face == 2 && second_face == 2 && third_face == 2 &&
 				fourth_face == 2) {
-				return 7;
+				return 10;
 			}
 		}
 	}
-	return 9;
+	return 12;
 }
 
 void Player::Set_Trump_Suit(int a_trump_suit) {
@@ -190,19 +192,34 @@ bool Player::Validate_If_Meld_Can_Be_Played(std::vector<Card*> & a_meld_card_lis
 std::string Player::Get_Console_Message() {
 	std::string message;
 	message += "Hand: ";
-	for(Card* card_ptr:m_hand_card_pile) {
-		message+= card_ptr->Get_Card_String_Value() + ' ';
-	}
+	
+	for(int i = 0; i < m_hand_card_pile.size(); i++) {
+		if(m_hand_meld_involvement_list[i].empty()) {
+			message += m_hand_card_pile[i]->Get_Card_String_Value() + " ";
+		}
+	}	
+
+
 	message+= "\n Capture Pile : ";
 	for(Card* card_ptr:m_capture_card_pile) {
 		message+= card_ptr->Get_Card_String_Value() + ' ';
 	}
 
 	message+= "\n Melds: ";
-	for(Card* card_ptr:m_meld_card_pile) {
-		message+= card_ptr->Get_Card_String_Value() + ' ';
+	for(int i = 0; i < m_current_meld_cards.size(); i++) {
+		for(auto& current_melds: m_current_meld_cards[i]) {
+			for(int& hand_index: current_melds) {
+				// std::cout << m_hand_card_pile[hand_index]->Get_Card_String_Value();
+				message += m_hand_card_pile[hand_index]->Get_Card_String_Value();
+				if(m_hand_meld_involvement_list[hand_index].size() > 1) {
+					message += "*";
+				}
+				message += " ";
+			}
+		}
 	}
 	message+="\n";
+
 	return message;
 }
 
@@ -368,51 +385,25 @@ std::pair<int, int> Player::Find_IndexMeldPair_Of_Card_To_Throw() {
 	std::vector<std::vector<int>> meld_logic_vector = Get_Meld_Logic_Vector();
 
 	add_to_meld_logic_vector(meld_logic_vector, m_hand_card_pile);
-	add_to_meld_logic_vector(meld_logic_vector, m_meld_card_pile);
 
 	std::pair<int,int> hand_pile_best_meld_pair = Get_Best_MeldCardIndexPair_From_Pile(meld_logic_vector, m_hand_card_pile);
-	std::pair<int,int> meld_pile_best_meld_pair = Get_Best_MeldCardIndexPair_From_Pile(meld_logic_vector, m_meld_card_pile);
 
 	int best_hand_pile_meld_score = INT_MIN;
 	int best_meld_pile_meld_score = INT_MIN;
 	if(hand_pile_best_meld_pair.second!= -1) {
 		best_hand_pile_meld_score = m_meld_scores[hand_pile_best_meld_pair.second];
 	}
-	if(meld_pile_best_meld_pair.second!= -1) {
-		best_meld_pile_meld_score = m_meld_scores[meld_pile_best_meld_pair.second];
-	}
-	if(hand_pile_best_meld_pair.second == -1 && meld_pile_best_meld_pair.second == -1) { // No melds found
+	if(hand_pile_best_meld_pair.second == -1) { // No melds found
 		return {-1, -1};
 	}
 
-	if (best_hand_pile_meld_score > best_meld_pile_meld_score) {
-		return hand_pile_best_meld_pair;
-	} else if (best_hand_pile_meld_score == best_meld_pile_meld_score) {
-		Card* hand_pile_card = m_hand_card_pile[hand_pile_best_meld_pair.first];
-		Card* meld_pile_card = m_meld_card_pile[meld_pile_best_meld_pair.first];
-		if ((hand_pile_card->Get_Suit() == m_trump_suit_of_current_game &&
-			 meld_pile_card->Get_Suit() != m_trump_suit_of_current_game) ||
-			(meld_pile_card->Get_Suit() != m_trump_suit_of_current_game &&
-			 hand_pile_card->Get_Card_Weight() >
-				 meld_pile_card->Get_Card_Weight()) ||
-			(hand_pile_card->Get_Suit() == m_trump_suit_of_current_game &&
-			 hand_pile_card->Get_Suit() == m_trump_suit_of_current_game &&
-			 hand_pile_card->Get_Card_Weight() >
-				 meld_pile_card->Get_Card_Weight())) {
-			return hand_pile_best_meld_pair;
-		} else {
-			return meld_pile_best_meld_pair;
-		}
-	} else {
-		return meld_pile_best_meld_pair;
-	}
+	return hand_pile_best_meld_pair;
 }
 
 std::pair<std::vector<int>, int> Player::Get_Best_Meld_Cards() {
 	std::vector<std::vector<int>> meld_logic_vector = Get_Meld_Logic_Vector();
 
 	add_to_meld_logic_vector(meld_logic_vector, m_hand_card_pile);
-	add_to_meld_logic_vector(meld_logic_vector, m_meld_card_pile);
 
 	int max_meld_score = INT_MIN;
 	int meld_number_played = -1;
@@ -446,7 +437,7 @@ std::pair<std::vector<int>, int> Player::Get_Best_Meld_Cards() {
 				return_vector.push_back(j);
 			}
 		}
-		return {return_vector, TO9(meld_number_played)};
+		return {return_vector, (meld_number_played)};
 	}
 }
 
@@ -456,12 +447,6 @@ int Player::Find_Index_In_Pile_From_Card_Id(int a_id) {
 	for(int i = 0; i < hand_pile_size; i++) {
 		if(m_hand_card_pile[i]->Get_Card_Id() == a_id) {
 			return i;
-		}
-	}
-
-	for(int i = 0; i < m_meld_card_pile.size(); i++) {
-		if(m_meld_card_pile[i]->Get_Card_Id() == a_id) {
-			return (i + hand_pile_size);
 		}
 	}
 
@@ -479,7 +464,6 @@ int Player::Get_Card_Weight(Card* card_ptr) {
 
 int Player::Find_Index_of_Smallest_Card_Greater_Than_Card(Card* a_card_ptr) {
 	const int& hand_pile_size = m_hand_card_pile.size();
-	const int& meld_pile_size = m_meld_card_pile.size();
 
 	int argument_card_weight = Get_Card_Weight(a_card_ptr);
 	int index = -1;
@@ -492,32 +476,16 @@ int Player::Find_Index_of_Smallest_Card_Greater_Than_Card(Card* a_card_ptr) {
 		}
 	}
 	
-	for (int i = 0; i < meld_pile_size; i++) {
-		int cur_card_weight = Get_Card_Weight(m_meld_card_pile[i]);
-		if(cur_card_weight > argument_card_weight && cur_card_weight < min_greatest_card_weight) {
-			index = i + hand_pile_size;
-			min_greatest_card_weight = cur_card_weight;
-		}
-	}
-
 	return index;
 }
 
 int Player::Find_Index_Of_Smallest_Card() {
 	const int& hand_pile_size = m_hand_card_pile.size();
-	const int& meld_pile_size = m_meld_card_pile.size();
 
 	int min_card_weight = INT_MAX;
 	int index =-1;
 	for(int i = 0; i < hand_pile_size; i++) {
 		int cur_card_weight = Get_Card_Weight(m_hand_card_pile[i]);
-		if(cur_card_weight < min_card_weight) {
-			index = i;
-			min_card_weight = cur_card_weight;
-		}
-	}
-	for(int i = 0; i < meld_pile_size; i++) {
-		int cur_card_weight = Get_Card_Weight(m_meld_card_pile[i]);
 		if(cur_card_weight < min_card_weight) {
 			index = i;
 			min_card_weight = cur_card_weight;
@@ -529,7 +497,6 @@ int Player::Find_Index_Of_Smallest_Card() {
 
 int Player::Find_Index_Of_Greatest_Card() {
 	const int& hand_pile_size = m_hand_card_pile.size();
-	const int& meld_pile_size = m_meld_card_pile.size();
 
 	int max_card_weight = INT_MIN;
 	int index =-1;
@@ -540,13 +507,37 @@ int Player::Find_Index_Of_Greatest_Card() {
 			max_card_weight = cur_card_weight;
 		}
 	}
-	for(int i = 0; i < meld_pile_size; i++) {
-		int cur_card_weight = Get_Card_Weight(m_meld_card_pile[i]);
-		if(cur_card_weight > max_card_weight) {
-			index = i;
-			max_card_weight = cur_card_weight;
-		}
-	}
 
 	return index;
+}
+
+void Player::Remove_Card_From_Pile(int a_index) {
+	// Remove the cards connected to the current card from the meld pile.
+	for(auto& removal_index_to_meld_pointer_triplet: m_hand_meld_involvement_list[a_index]) {
+		auto& cards_to_remove_from_meld = m_current_meld_cards[removal_index_to_meld_pointer_triplet[0]][removal_index_to_meld_pointer_triplet[1]];
+		for(int& index_to_remove_from_meld: cards_to_remove_from_meld) {
+			for(int i = 0; i < m_hand_meld_involvement_list[index_to_remove_from_meld].size(); i++) {
+				auto& search_triplet = m_hand_meld_involvement_list[index_to_remove_from_meld][i];
+				if(search_triplet[0] == removal_index_to_meld_pointer_triplet[0]){
+					if(&search_triplet != &removal_index_to_meld_pointer_triplet) {
+						search_triplet = m_hand_meld_involvement_list[index_to_remove_from_meld].back();
+						m_hand_meld_involvement_list[index_to_remove_from_meld].pop_back();
+					}
+				}
+			}
+		}
+		// m_current_meld_cards[removal_index_to_meld_pointer_triplet[0]][removal_index_to_meld_pointer_triplet[1]] = m_current_meld_cards[removal_index_to_meld_pointer_triplet[0]].back();
+		cards_to_remove_from_meld = m_current_meld_cards[removal_index_to_meld_pointer_triplet[0]].back();
+		m_current_meld_cards[removal_index_to_meld_pointer_triplet[0]].pop_back();
+	}	
+
+	// Change the meld lists pointing to hand at the back to change location of last card to the one that is about to be removed. 
+	for(auto& ele: m_hand_meld_involvement_list.back()) {
+		m_current_meld_cards[ele[0]][ele[1]][ele[2]] = a_index;
+	}
+	// Remove Card Completely from the Hand
+	m_hand_card_pile[a_index] = m_hand_card_pile.back();
+	m_hand_card_pile.pop_back();
+	m_hand_meld_involvement_list[a_index] = m_hand_meld_involvement_list.back();
+	m_hand_meld_involvement_list.pop_back();
 }

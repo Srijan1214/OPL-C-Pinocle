@@ -12,17 +12,13 @@ Card* Computer::Get_Card_To_Play(Card* a_lead_card_played) {
 		if(best_card_index != -1) {
 			// meld is possible if best card is thrown
 			index = best_card_index;
-			int id;
-			if(index < m_hand_card_pile.size()) id = m_hand_card_pile[index]->Get_Card_Id();
-			else id = m_meld_card_pile[index - m_hand_card_pile.size()]->Get_Card_Id();
+			int id = m_hand_card_pile[index]->Get_Card_Id();
 			std::cout << "Computer played " << "\"" << Card::Get_String_From_Id(id) << "\"" << " because it was the card resulting in the highest possible meld." << std::endl;
 		} else {
 			// no meld is possible from any card thrown
 			// throw the greatest card to maximize winning chances
 			index = Find_Index_Of_Greatest_Card();
-			int id;
-			if(index < m_hand_card_pile.size()) id = m_hand_card_pile[index]->Get_Card_Id();
-			else id = m_meld_card_pile[index - m_hand_card_pile.size()]->Get_Card_Id();
+			int id = m_hand_card_pile[index]->Get_Card_Id();
 			std::cout << "Computer played " << "\"" << Card::Get_String_From_Id(id) << "\"" << ", which is the greatest card, because it had no melds possible available." << std::endl;
 		}
 	} else {
@@ -30,37 +26,25 @@ Card* Computer::Get_Card_To_Play(Card* a_lead_card_played) {
 		index = Find_Index_of_Smallest_Card_Greater_Than_Card(a_lead_card_played);
 		if(index == -1) {
 			index = Find_Index_Of_Smallest_Card();
-			int id;
-			if(index < m_hand_card_pile.size()) id = m_hand_card_pile[index]->Get_Card_Id();
-			else id = m_meld_card_pile[index - m_hand_card_pile.size()]->Get_Card_Id();
+			int id = m_hand_card_pile[index]->Get_Card_Id();
 			std::cout << "Computer played " << "\"" << Card::Get_String_From_Id(id) << "\"" << ", which is the smallest card, because it had no possibility of winning." << std::endl;
 		} else {
-			int id;
-			if(index < m_hand_card_pile.size()) id = m_hand_card_pile[index]->Get_Card_Id();
-			else id = m_meld_card_pile[index - m_hand_card_pile.size()]->Get_Card_Id();
+			int id = m_hand_card_pile[index]->Get_Card_Id();
 			std::cout << "Computer played " << "\"" << Card::Get_String_From_Id(id) << "\"" << " because it was the smallest greater card than the lead player's card." << std::endl;
 		}
 	}
 	std::cout << std::endl;
-	if(index > m_hand_card_pile.size()) {
-		index = index - m_hand_card_pile.size();
-		Card* card_ptr = m_meld_card_pile[index];
-		m_meld_card_pile[index] = m_meld_card_pile.back();
-		m_meld_card_pile.pop_back();
-		return card_ptr;
-	}
 	Card* card_ptr = m_hand_card_pile[index];
-	m_hand_card_pile[index] = m_hand_card_pile.back();
-	m_hand_card_pile.pop_back();
+	Remove_Card_From_Pile(index);
 	return card_ptr;
 }
 
 int Computer::Get_Meld_To_Play() {
 	std::pair<std::vector<int>,int> recommended_card_with_best_meld = Get_Best_Meld_Cards();
 
-	int& recommended_meld_number = recommended_card_with_best_meld.second;
+	int recommended_meld_number_9 = TO9(recommended_card_with_best_meld.second);
 
-	if(recommended_meld_number != -1) {
+	if(recommended_meld_number_9 != -1) {
 		std::cout << "The computer presented";
 		for(int i = 0; i < recommended_card_with_best_meld.first.size(); i++) {
 			if(i != 0) {
@@ -72,7 +56,7 @@ int Computer::Get_Meld_To_Play() {
 			}
 			std::cout << " " << Card::Get_String_From_Id(recommended_card_with_best_meld.first[i]);
 		}
-		std::cout << " as a \"" << m_meld_names[recommended_meld_number] << "\" meld to earn "<< m_meld_scores[recommended_meld_number] <<" points." << std::endl;
+		std::cout << " as a \"" << m_meld_names[recommended_meld_number_9] << "\" meld to earn "<< m_meld_scores[recommended_meld_number_9] <<" points." << std::endl;
 
 		// if can play the move, then move all the cards from meld pile to hand pile.
 		std::vector<int> hand_pile_indexes;
@@ -85,14 +69,8 @@ int Computer::Get_Meld_To_Play() {
 		std::sort(hand_pile_indexes.begin(),hand_pile_indexes.end());
 
 		// Move the cards that are played for meld from the hand pile to the meld pile.
-		for (int i = hand_pile_indexes.size() - 1; i >= 0; i--) {
-			int& index = hand_pile_indexes[i];
-			m_meld_card_pile.push_back(m_hand_card_pile[index]);
-			m_hand_card_pile[index] = m_hand_card_pile.back();
-			m_hand_card_pile.pop_back();
-		}
 	} else {
 		std::cout << "Computer found no possible melds. So, it did not play any." << std::endl;
 	}
-	return recommended_meld_number;
+	return recommended_meld_number_9;
 }
