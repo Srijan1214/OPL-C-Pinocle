@@ -7,7 +7,6 @@ Card* Computer::Get_Card_To_Play(Card* a_lead_card_played) {
 		// computer is lead player
 		std::pair<int,int> recommended_card_with_best_meld = Find_IndexMeldPair_Of_Card_To_Throw();
 		int & best_card_index = recommended_card_with_best_meld.first;
-		int & best_meld_index = recommended_card_with_best_meld.second;
 
 		if(best_card_index != -1) {
 			// meld is possible if best card is thrown
@@ -40,8 +39,9 @@ Card* Computer::Get_Card_To_Play(Card* a_lead_card_played) {
 }
 
 int Computer::Get_Meld_To_Play() {
-	std::pair<std::vector<int>,int> recommended_card_with_best_meld = Get_Best_Meld_Cards();
+	std::pair<std::vector<int>,int> recommended_card_with_best_meld = Get_Indexes_And_Meld_Number12_Best_Meld();
 
+	int recommended_meld_number_12 = recommended_card_with_best_meld.second;
 	int recommended_meld_number_9 = TO9(recommended_card_with_best_meld.second);
 
 	if(recommended_meld_number_9 != -1) {
@@ -58,17 +58,31 @@ int Computer::Get_Meld_To_Play() {
 		}
 		std::cout << " as a \"" << m_meld_names[recommended_meld_number_9] << "\" meld to earn "<< m_meld_scores[recommended_meld_number_9] <<" points." << std::endl;
 
-		// if can play the move, then move all the cards from meld pile to hand pile.
-		std::vector<int> hand_pile_indexes;
+		// Create the Index vector for meld cards.
+		std::vector<int> meld_card_indexes;
 		for(int& card_id: recommended_card_with_best_meld.first) {
-			int card_index = Find_Index_In_Pile_From_Card_Id(card_id);
+			int card_index = Search_Card_In_Pile(card_id);
 			if(card_index < m_hand_card_pile.size()) {
-				hand_pile_indexes.push_back(card_index);
+				meld_card_indexes.push_back(card_index);
 			}
 		}
-		std::sort(hand_pile_indexes.begin(),hand_pile_indexes.end());
 
-		// Move the cards that are played for meld from the hand pile to the meld pile.
+		// meld is valid so update the hand to meld involvement
+		for(int i = 0; i < meld_card_indexes.size(); i++) {
+			int& index = meld_card_indexes[i];
+			int number_of_similar_melds = m_current_meld_cards[recommended_meld_number_12].size();
+			m_hand_meld_involvement_list[index].push_back({recommended_meld_number_12, number_of_similar_melds, i});
+		}
+		m_current_meld_cards[recommended_meld_number_12].push_back(meld_card_indexes);
+
+		//Create cards vector
+		std::vector<Card*> meld_cards;
+		for(int& index: meld_card_indexes) {
+			meld_cards.push_back(m_hand_card_pile[index]);
+		}
+		// Update that the current meld has been played the history.
+		Update_Meld_History(meld_cards, recommended_meld_number_9);
+
 	} else {
 		std::cout << "Computer found no possible melds. So, it did not play any." << std::endl;
 	}

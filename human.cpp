@@ -82,6 +82,8 @@ std::vector<int> Human::Parse_Indexes_Vector_From_String(std::string a_user_inpu
 			insert_val = std::stoi(word);
 		} catch(std::invalid_argument) {
 
+		} catch(std::out_of_range) {
+
 		}
 		if (insert_val >= 0 &&
 			insert_val < (m_hand_card_pile.size())){
@@ -138,7 +140,7 @@ int Human::Get_Meld_To_Play() {
 
 		int meld_number_12 = Get_Meld_Type_12_From_Cards(meld_cards); 
 		meld_number_9 = TO9(meld_number_12);
-		if (meld_number_9 >= 0 && meld_number_9 < 9 && Is_Meld_Valid(meld_cards)) {
+		if (meld_number_9 >= 0 && meld_number_9 < 9 && Is_Meld_Allowed_By_History(meld_cards, meld_number_9)) {
 			Update_Meld_History(meld_cards,meld_number_9);
 
 			// meld is valid so update the hand to meld involvement
@@ -190,7 +192,6 @@ int Human::Get_Integer_Input_From_User() {
 	return ret_val;
 }
 
-
 char Human::Get_Char_Input_From_User() {
 	char ret_val;
 	std::string user_input;
@@ -210,7 +211,6 @@ void Human::Print_Computer_Card_Recomendation(Card* a_lead_card_played) {
 		// computer is lead player
 		std::pair<int,int> recommended_card_with_best_meld = Find_IndexMeldPair_Of_Card_To_Throw();
 		int & best_card_index = recommended_card_with_best_meld.first;
-		int & best_meld_index = recommended_card_with_best_meld.second;
 
 		if(best_card_index != -1) {
 			// meld is possible if best card is thrown
@@ -240,7 +240,7 @@ void Human::Print_Computer_Card_Recomendation(Card* a_lead_card_played) {
 }
 
 void Human::Print_Computer_Meld_Recommendation() {
-	std::pair<std::vector<int>,int> recommended_card_with_best_meld = Get_Best_Meld_Cards();
+	std::pair<std::vector<int>,int> recommended_card_with_best_meld = Get_Indexes_And_Meld_Number12_Best_Meld();
 
 	int recommended_meld_number = TO9(recommended_card_with_best_meld.second);
 

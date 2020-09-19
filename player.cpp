@@ -28,15 +28,6 @@ void Player::Add_Cards_To_Player_Capture_Pile(Card* a_card_ptr1,
 	m_capture_card_pile.push_back(a_card_ptr2);
 }
 
-bool Player::Is_Meld_Valid(std::vector<Card*>& a_meld_card_list) {
-	int meld_number = TO9(Get_Meld_Type_12_From_Cards(a_meld_card_list));
-	if(meld_number < 0 && meld_number >= 9){ 
-		return false;
-	}
-
-	return Validate_If_Meld_Can_Be_Played(a_meld_card_list,meld_number);
-}
-
 void Player::Set_Round_Score(int a_score) {
 	m_round_score = a_score;
 }
@@ -168,21 +159,21 @@ void Player::Set_Trump_Suit(int a_trump_suit) {
 	m_trump_suit_of_current_game = a_trump_suit;
 }
 
-void Player::Update_Meld_History(std::vector<Card*> & a_meld_card_list, int a_meld_number) {
-	m_no_of_times_meld_has_been_played[a_meld_number]++;
+void Player::Update_Meld_History(std::vector<Card*> & a_meld_card_list, int a_meld_number_9) {
+	m_no_of_times_meld_has_been_played[a_meld_number_9]++;
 	for(Card* card_ptr: a_meld_card_list) {
-		m_which_card_used_for_meld[a_meld_number][card_ptr->Get_Card_Id()] = true;
+		m_which_card_used_for_meld[a_meld_number_9][card_ptr->Get_Card_Id()] = true;
 	}
 }
 
-bool Player::Validate_If_Meld_Can_Be_Played(std::vector<Card*> & a_meld_card_list, int a_meld_number){
-	if(m_no_of_times_meld_has_been_played[a_meld_number] == 0 ) {
+bool Player::Is_Meld_Allowed_By_History(std::vector<Card*> & a_meld_card_list, int a_meld_number_9){
+	if(m_no_of_times_meld_has_been_played[a_meld_number_9] == 0 ) {
 		return true;
 	}
 
 	//return false if one card as been played for the same meld.
 	for(Card* card_ptr: a_meld_card_list) {
-		if(m_which_card_used_for_meld[a_meld_number][card_ptr->Get_Card_Id()] == true) {
+		if(m_which_card_used_for_meld[a_meld_number_9][card_ptr->Get_Card_Id()] == true) {
 			return false;
 		}
 	}
@@ -209,7 +200,6 @@ std::string Player::Get_Console_Message() {
 	for(int i = 0; i < m_current_meld_cards.size(); i++) {
 		for(auto& current_melds: m_current_meld_cards[i]) {
 			for(int& hand_index: current_melds) {
-				// std::cout << m_hand_card_pile[hand_index]->Get_Card_String_Value();
 				message += m_hand_card_pile[hand_index]->Get_Card_String_Value();
 				if(m_hand_meld_involvement_list[hand_index].size() > 1) {
 					message += "*";
@@ -388,11 +378,6 @@ std::pair<int, int> Player::Find_IndexMeldPair_Of_Card_To_Throw() {
 
 	std::pair<int,int> hand_pile_best_meld_pair = Get_Best_MeldCardIndexPair_From_Pile(meld_logic_vector, m_hand_card_pile);
 
-	int best_hand_pile_meld_score = INT_MIN;
-	int best_meld_pile_meld_score = INT_MIN;
-	if(hand_pile_best_meld_pair.second!= -1) {
-		best_hand_pile_meld_score = m_meld_scores[hand_pile_best_meld_pair.second];
-	}
 	if(hand_pile_best_meld_pair.second == -1) { // No melds found
 		return {-1, -1};
 	}
@@ -400,7 +385,7 @@ std::pair<int, int> Player::Find_IndexMeldPair_Of_Card_To_Throw() {
 	return hand_pile_best_meld_pair;
 }
 
-std::pair<std::vector<int>, int> Player::Get_Best_Meld_Cards() {
+std::pair<std::vector<int>, int> Player::Get_Indexes_And_Meld_Number12_Best_Meld() {
 	std::vector<std::vector<int>> meld_logic_vector = Get_Meld_Logic_Vector();
 
 	add_to_meld_logic_vector(meld_logic_vector, m_hand_card_pile);
@@ -441,7 +426,7 @@ std::pair<std::vector<int>, int> Player::Get_Best_Meld_Cards() {
 	}
 }
 
-int Player::Find_Index_In_Pile_From_Card_Id(int a_id) {
+int Player::Search_Card_In_Pile(int a_id) {
 	const size_t& hand_pile_size = m_hand_card_pile.size();
 
 	for(int i = 0; i < hand_pile_size; i++) {
