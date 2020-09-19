@@ -16,6 +16,7 @@ class Card {
 	static const int m_face_weights[6];
 	static int Get_Face_From_Id(int a_id);
 	static int Get_Suit_From_Id(int a_id);
+	static int Get_Weight_From_Id(int a_id);
 	static std::string Get_String_From_Id(int);
 	std::string m_card_type;
 

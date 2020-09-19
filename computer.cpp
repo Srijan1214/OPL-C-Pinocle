@@ -18,7 +18,7 @@ Card* Computer::Get_Card_To_Play(Card* a_lead_card_played) {
 			// throw the greatest card to maximize winning chances
 			index = Find_Index_Of_Greatest_Card();
 			int id = m_hand_card_pile[index]->Get_Card_Id();
-			std::cout << "Computer played " << "\"" << Card::Get_String_From_Id(id) << "\"" << ", which is the greatest card, because it had no melds possible available." << std::endl;
+			std::cout << "Computer played " << "\"" << Card::Get_String_From_Id(id) << "\"" << ", which is the greatest card. However, it has no melds available." << std::endl;
 		}
 	} else {
 		// computer is chase player

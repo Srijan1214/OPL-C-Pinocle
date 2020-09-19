@@ -80,9 +80,9 @@ std::vector<int> Human::Parse_Indexes_Vector_From_String(std::string a_user_inpu
 		int insert_val = -1;
 		try{
 			insert_val = std::stoi(word);
-		} catch(std::invalid_argument) {
+		} catch(const std::invalid_argument&) {
 
-		} catch(std::out_of_range) {
+		} catch(const std::out_of_range&) {
 
 		}
 		if (insert_val >= 0 &&
@@ -183,9 +183,9 @@ int Human::Get_Integer_Input_From_User() {
 
 	try{
 		ret_val = std::stoi(user_input);
-	}catch (std::invalid_argument) {
+	}catch (const std::invalid_argument&) {
 
-	} catch (std:: out_of_range) {
+	} catch (const std:: out_of_range&) {
 
 	}
 

@@ -12,9 +12,9 @@ const std::string Player::m_meld_names[9] = {"Flush",
 											 "Pinochle"};
 
 Player::Player()
-	: m_no_of_times_meld_has_been_played(9, 0),
+	: m_current_meld_cards(12),
+	  m_no_of_times_meld_has_been_played(9, 0),
 	  m_which_card_used_for_meld(9, std::vector<bool>(48, false)),
-	  m_current_meld_cards(12),
 	  m_trump_suit_of_current_game(-1) {}
 
 void Player::Give_Card_To_Player(Card* a_card_ptr) {
@@ -314,12 +314,6 @@ int Player::Get_Best_Meld_If_Card_Thrown(
 				if (cur_score > max_meld_score) {
 					max_meld_score = cur_score;
 					meld_number_played = TO9(i);
-				} else if (cur_score == max_meld_score) {
-					if (a_card_ptr->Get_Suit() ==
-						m_trump_suit_of_current_game) {
-						max_meld_score = cur_score;
-						meld_number_played = TO9(i);
-					}
 				}
 			}
 		}
@@ -328,13 +322,14 @@ int Player::Get_Best_Meld_If_Card_Thrown(
 	return meld_number_played;
 }
 
-std::pair<int,int> Player::Get_Best_MeldCardIndexPair_From_Pile(std::vector<std::vector<int>>& a_meld_logic_vector, std::vector<Card*> a_card_pile) {
+std::pair<int,int> Player::Get_Best_MeldCardIndexPair_From_Logic(std::vector<std::vector<int>>& a_meld_logic_vector) {
 	int max_meld_score = INT_MIN;
 	int best_meld_number = -1;
 	int best_meld_index = -1;
+	int best_card_weight = -1;
 
 	int index = 0;
-	for(Card* card_ptr: a_card_pile) {
+	for(Card* card_ptr: m_hand_card_pile) {
 		int meld_number_played = Get_Best_Meld_If_Card_Thrown(a_meld_logic_vector, card_ptr);
 		if(meld_number_played != -1) {
 			int cur_score = m_meld_scores[meld_number_played];
@@ -342,22 +337,14 @@ std::pair<int,int> Player::Get_Best_MeldCardIndexPair_From_Pile(std::vector<std:
 				max_meld_score = cur_score;
 				best_meld_number = meld_number_played;
 				best_meld_index = index;
+				best_card_weight = Get_Card_Weight(m_hand_card_pile[index]);
 			} else if (cur_score == max_meld_score) {
-				if ((card_ptr->Get_Suit() == m_trump_suit_of_current_game &&
-					 a_card_pile[best_meld_index]->Get_Suit() !=
-						 m_trump_suit_of_current_game) ||
-					(a_card_pile[best_meld_index]->Get_Suit() !=
-						 m_trump_suit_of_current_game &&
-					 card_ptr->Get_Card_Weight() >
-						 a_card_pile[best_meld_index]->Get_Card_Weight()) ||
-					(a_card_pile[best_meld_index]->Get_Suit() ==
-						 m_trump_suit_of_current_game &&
-					 card_ptr->Get_Suit() == m_trump_suit_of_current_game &&
-					 card_ptr->Get_Card_Weight() >
-						 a_card_pile[best_meld_index]->Get_Card_Weight())) {
+				int cur_card_weight = Get_Card_Weight(card_ptr);
+				if(cur_card_weight > best_card_weight) {
 					max_meld_score = cur_score;
 					best_meld_number = meld_number_played;
 					best_meld_index = index;
+					best_card_weight = cur_card_weight;
 				}
 			}
 		}
@@ -376,7 +363,7 @@ std::pair<int, int> Player::Find_IndexMeldPair_Of_Card_To_Throw() {
 
 	add_to_meld_logic_vector(meld_logic_vector, m_hand_card_pile);
 
-	std::pair<int,int> hand_pile_best_meld_pair = Get_Best_MeldCardIndexPair_From_Pile(meld_logic_vector, m_hand_card_pile);
+	std::pair<int,int> hand_pile_best_meld_pair = Get_Best_MeldCardIndexPair_From_Logic(meld_logic_vector);
 
 	if(hand_pile_best_meld_pair.second == -1) { // No melds found
 		return {-1, -1};
@@ -438,30 +425,47 @@ int Player::Search_Card_In_Pile(int a_id) {
 	return -1;
 }
 
-int Player::Get_Card_Weight(Card* card_ptr) {
-	int face_weight = card_ptr->Get_Card_Weight();
-	if(card_ptr->Get_Suit() == m_trump_suit_of_current_game) {
-		// add a big number to face weight.
-		return face_weight + 100;
+bool Player::Is_First_Card_Greater_Than_Lead(int a_card_first, int a_card_lead) {
+	if (Card::Get_Suit_From_Id(a_card_first) == m_trump_suit_of_current_game &&
+		Card::Get_Suit_From_Id(a_card_lead) != m_trump_suit_of_current_game) {
+		return true;
 	}
-	return face_weight;
+	if (Card::Get_Suit_From_Id(a_card_lead) == m_trump_suit_of_current_game &&
+		Card::Get_Suit_From_Id(a_card_first) != m_trump_suit_of_current_game) {
+		return false;
+	}
+
+	// The the suit of second card is not the same as the first's
+	// then the lead, which is second, will automatically win
+	if(Card::Get_Suit_From_Id(a_card_first) != Card::Get_Suit_From_Id(a_card_lead)) {
+		return false;
+	}
+	// if same suit and weight is greater, then first card wins
+	if(Card::Get_Weight_From_Id(a_card_first) > Card::Get_Weight_From_Id(a_card_lead)) {
+		return true;
+	}
+	//if the same card, the lead card wins
+	return false;
 }
 
 int Player::Find_Index_of_Smallest_Card_Greater_Than_Card(Card* a_card_ptr) {
 	const int& hand_pile_size = m_hand_card_pile.size();
 
-	int argument_card_weight = Get_Card_Weight(a_card_ptr);
-	int index = -1;
+	int argument_card_id = a_card_ptr->Get_Card_Id();
+	int min_card_index = -1;
 	int min_greatest_card_weight = INT_MAX;
 	for (int i = 0; i < hand_pile_size; i++) {
+		int cur_card_id = m_hand_card_pile[i]->Get_Card_Id();
 		int cur_card_weight = Get_Card_Weight(m_hand_card_pile[i]);
-		if(cur_card_weight > argument_card_weight && cur_card_weight < min_greatest_card_weight) {
-			index = i;
-			min_greatest_card_weight = cur_card_weight;
+		if(Is_First_Card_Greater_Than_Lead(cur_card_id, argument_card_id)) {
+			if(cur_card_weight < min_greatest_card_weight) {
+				min_card_index = i;
+				min_greatest_card_weight = cur_card_weight;
+			}
 		}
 	}
 	
-	return index;
+	return min_card_index;
 }
 
 int Player::Find_Index_Of_Smallest_Card() {
@@ -494,6 +498,15 @@ int Player::Find_Index_Of_Greatest_Card() {
 	}
 
 	return index;
+}
+
+int Player::Get_Card_Weight(Card* card_ptr) {
+	int face_weight = card_ptr->Get_Card_Weight();
+	if(card_ptr->Get_Suit() == m_trump_suit_of_current_game) {
+		// add a big number to face weight.
+		return face_weight + 100;
+	}
+	return face_weight;
 }
 
 void Player::Remove_Card_From_Pile(int a_index) {

@@ -68,6 +68,10 @@ int Card::Get_Suit_From_Id(int a_id) {
 	return a_id / 12;
 }
 
+int Card::Get_Weight_From_Id(int a_id) {
+	return m_face_weights[Get_Face_From_Id(a_id)];
+}
+
 int Card::Get_Card_Id() {
 	return m_id;
 }

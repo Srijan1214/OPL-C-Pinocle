@@ -62,15 +62,16 @@ class Player {
 	int Find_Index_of_Smallest_Card_Greater_Than_Card(Card* card_ptr);
 	int Find_Index_Of_Smallest_Card();
 	int Find_Index_Of_Greatest_Card();
-	int Get_Card_Weight(Card* card_ptr);
 	int TO9(int a_12_based_index);
 	int Search_Card_In_Pile(int a_id);
+	bool Is_First_Card_Greater_Than_Lead(int a_card_1, int a_card_2);
+	int Get_Card_Weight(Card* card_ptr);
 
    private:
 	// The rest are function only used by the Find_IndexMeldPair_Of_Card_To_Throw function.
 	std::vector<std::vector<int>> Get_Meld_Logic_Vector();
 	void add_to_meld_logic_vector(std::vector<std::vector<int>>& a_meld_logic_vector, std::vector<Card*>& a_card_pile);
 	int Get_Best_Meld_If_Card_Thrown(std::vector<std::vector<int>>& a_meld_logic_vector, Card* a_card_ptr);
-	std::pair<int,int> Get_Best_MeldCardIndexPair_From_Pile(std::vector<std::vector<int>>& a_meld_logic_vector, std::vector<Card*> a_card_pile);
+	std::pair<int,int> Get_Best_MeldCardIndexPair_From_Logic(std::vector<std::vector<int>>& a_meld_logic_vector);
 
 };

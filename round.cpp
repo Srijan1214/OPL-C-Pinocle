@@ -62,7 +62,7 @@ void Round::Play_A_Round(int a_cur_round) {
 		Play_Cards_Against_Each_Other();
 		//lead player declares meld
 		// Print_Interface_Message();
-		int meld_index = m_players[m_cur_lead_player]->Get_Meld_To_Play();
+		meld_index = m_players[m_cur_lead_player]->Get_Meld_To_Play();
 		if (meld_index >= 0 && meld_index < 9) {
 			m_scores[m_cur_lead_player] += Player::m_meld_scores[meld_index];
 		}
@@ -78,21 +78,17 @@ void Round::Play_Cards_Against_Each_Other() {
 
 	int who_won = -1;
 
-	if(lead_card->Get_Suit() == m_trump_card->Get_Suit()) {
-		if(chase_card->Get_Suit() != m_trump_card->Get_Suit()) {
-			who_won = m_cur_lead_player;
-		} else {
-			if(lead_card->Get_Card_Weight() >= chase_card->Get_Card_Weight() ) {
-				who_won = m_cur_lead_player;
-			} else {
-				who_won = chase_player;
-			}
-		}
-	}else {
+	if(lead_card->Get_Suit() == chase_card->Get_Suit()) {
 		if(lead_card->Get_Card_Weight() >= chase_card->Get_Card_Weight() ) {
 			who_won = m_cur_lead_player;
 		} else {
 			who_won = chase_player;
+		}
+	}else {
+		if(chase_card->Get_Suit() == m_trump_card->Get_Suit()) {
+			who_won = chase_player;
+		}else {
+			who_won = m_cur_lead_player;
 		}
 	}
 
