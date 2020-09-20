@@ -16,7 +16,7 @@ void Round::Play_A_Round() {
 		player_ptr->Set_Trump_card(m_trump_card->Get_Card_Id());
 	}
 
-	// Load_From_File("serialize");
+	Load_From_File("serialize1");
 	Print_Interface_Message();
 
 	for(int i = 0; i < 11; i++) {
@@ -36,7 +36,7 @@ void Round::Play_A_Round() {
 		std::cout << std::endl << "--------------------------------------------------------New Battle--------------------------------------------------------------------------------------------------" << std::endl;
 		Print_Interface_Message();
 	}
-	Save_To_File("serialize1");
+	// Save_To_File("serialize1");
 
 	// In the following battle, the stock pile is finished and the trump card is given to the chase player.
 	Play_Cards_Against_Each_Other();
@@ -215,10 +215,69 @@ void Round::Load_From_File(std::string a_path) {
 	std::string line;
 	std::string computer_load_string;
 	std::string human_load_string;
+	std::string stock_load_string;
+	int round_number;
+	int computer_round_score, computer_prev_score;
+	int human_round_score, human_prev_score;
+	int trump_card_id;
+	int next_player;
+
+	auto get_score_pairs_from_string = [](std::string& line) {
+		std::pair<int,int> ret_val;
+		int start = line.find(':') + 1;
+		start = line.find_first_not_of(' ', start);
+		int end = line.find_first_of(' ', start);
+		std::string num_str = line.substr(start, end - start);
+		ret_val.first = std::stoi(num_str);
+		start = line.find_first_not_of(' ', end);
+		start = line.find_first_not_of(' ', start + 1);
+		num_str = line.substr(start, line.size() - start);
+		ret_val.second = std::stoi(num_str);
+		return ret_val;
+	};
 
 	if(file.is_open()){
 		int line_number = 1;
 		while(std::getline(file, line)) {
+			if(line_number == 1) {
+				int start = line.find(':') + 1;
+				std::string num_str = line.substr(start, line.size() - start);
+				round_number = std::stoi(num_str);
+			}
+			if(line_number == 4) {
+				std::pair<int, int> prev_score_and_cur_score = get_score_pairs_from_string(line);
+				computer_prev_score = prev_score_and_cur_score.first;
+				computer_round_score = prev_score_and_cur_score.second;
+			}
+			if(line_number == 10) {
+				std::pair<int, int> prev_score_and_cur_score = get_score_pairs_from_string(line);
+				human_prev_score = prev_score_and_cur_score.first;
+				human_round_score = prev_score_and_cur_score.second;
+			}
+			if(line_number == 15) {
+				int start = line.find(':') + 1;
+				start = line.find_first_not_of(' ', start);
+				std::string card_str = line.substr(start, line.size() - start);
+				trump_card_id = Card::Get_Card_Id_From_String(card_str);
+			}
+			if(line_number == 16) {
+				int start = line.find(':') + 1;
+				start = line.find_first_not_of(' ', start);
+				int end = line.find_last_not_of(' ');
+				stock_load_string = line.substr(start, end - start + 1);
+			}
+			if(line_number == 18) {
+				int start = line.find(':') + 1;
+				start = line.find_first_not_of(' ', start);
+				int end = line.find_last_not_of(' ');
+
+				std::string turn_str = line.substr(start, end - start + 1);
+				if(turn_str == "Human") {
+					next_player = 0;
+				} else if (turn_str == "Computer"){
+					next_player = 1;
+				}
+			}
 			if(line_number >= 5 && line_number < 8) {
 				computer_load_string += (line + '\n');
 			}
@@ -232,6 +291,28 @@ void Round::Load_From_File(std::string a_path) {
 		throw 123;
 	}
 
-	m_players[0]->Load_Members_From_Serialization_String(human_load_string);
-	m_players[1]->Load_Members_From_Serialization_String(computer_load_string);
+	// Destroy all previous cards so that new cards can be created from file.
+	m_deck.Remove_All_Cards_From_Deck();
+
+	std::vector<bool> cards_that_have_been_used(48,false);
+	m_trump_card = new Card(trump_card_id);
+	cards_that_have_been_used[trump_card_id] = true;
+	m_players[0]->Set_Trump_card(trump_card_id);
+	m_players[1]->Set_Trump_card(trump_card_id);
+	m_players[0]->Set_Trump_Suit(Card::Get_Suit_From_Id(trump_card_id));
+	m_players[1]->Set_Trump_Suit(Card::Get_Suit_From_Id(trump_card_id));
+
+	
+
+	m_deck.Load_Stock_Pile_From_String(stock_load_string, cards_that_have_been_used);
+	m_players[0]->Load_Members_From_Serialization_String(human_load_string, cards_that_have_been_used);
+	m_players[1]->Load_Members_From_Serialization_String(computer_load_string, cards_that_have_been_used);
+	m_cur_lead_player = next_player;
+
+	m_prev_scores[0] = human_prev_score;
+	m_prev_scores[1] = computer_prev_score;
+	m_scores[0] = human_round_score;
+	m_scores[1] = computer_round_score;
+
+	m_cur_round_number = round_number;
 }

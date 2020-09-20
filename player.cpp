@@ -241,7 +241,7 @@ std::string Player::Get_Melds_String() {
 	return message;
 }
 
-void Player::Load_Members_From_Serialization_String(std::string a_serialization_string) {
+void Player::Load_Members_From_Serialization_String(std::string a_serialization_string, std::vector<bool> &a_cards_that_have_been_used) {
 	auto trim = [](std::string& str) -> std::string& { 
 		// right trim
 		while (str.length () > 0 && (str [str.length ()-1] == ' ' || str [str.length ()-1] == '\t'))
@@ -275,47 +275,44 @@ void Player::Load_Members_From_Serialization_String(std::string a_serialization_
 	m_hand_meld_involvement_list.clear();
 	m_capture_card_pile.clear();
 
-	Load_Hand_Cards_From_String(hand_cards_string);
-	Load_Capture_Cards_From_String(capture_cards_string);
-	Load_Meld_Cards_From_String(meld_cards_string);
+	Load_Hand_Cards_From_String(hand_cards_string, a_cards_that_have_been_used);
+	Load_Capture_Cards_From_String(capture_cards_string, a_cards_that_have_been_used);
+	Load_Meld_Cards_From_String(meld_cards_string, a_cards_that_have_been_used);
 }
 
-void Player::Load_Hand_Cards_From_String(std::string &a_meld_string) {
+void Player::Load_Hand_Cards_From_String(std::string &a_meld_string, std::vector<bool> &a_cards_that_have_been_used) {
 	std::stringstream s(a_meld_string);
 	std::string card_str;
-	std::vector<bool> has_card_been_seen(48, false);
 	while (std::getline(s, card_str, ' ')) {
 		int id = Card::Get_Card_Id_From_String(card_str);
-		if(has_card_been_seen[id]) {
+		if(a_cards_that_have_been_used[id]) {
 			id+=1;
-		} else {
-			has_card_been_seen[id] = true;
 		}
+		a_cards_that_have_been_used[id] = true;
 		m_hand_card_pile.push_back(new Card(id));
 		m_hand_meld_involvement_list.push_back({});
 	}
 }
 
-void Player::Load_Capture_Cards_From_String(std::string &a_meld_string) {
+void Player::Load_Capture_Cards_From_String(std::string &a_meld_string, std::vector<bool> &a_cards_that_have_been_used) {
 	std::stringstream s(a_meld_string);
 	std::string card_str;
-	std::vector<bool> has_card_been_seen(48, false);
 	while (std::getline(s, card_str, ' ')) {
 		int id = Card::Get_Card_Id_From_String(card_str);
-		if(has_card_been_seen[id]) {
+		if(a_cards_that_have_been_used[id]) {
 			id+=1;
-		} else {
-			has_card_been_seen[id] = true;
 		}
+		a_cards_that_have_been_used[id] = true;
 		m_capture_card_pile.push_back(new Card(id));
 	}
 }
 
-void Player::Load_Meld_Cards_From_String(std::string &a_meld_string) {
+void Player::Load_Meld_Cards_From_String(std::string &a_meld_string, std::vector<bool> &a_cards_that_have_been_used) {
 	std::vector<std::vector<int>> logic_vector = Get_Meld_Logic_Vector();
+	logic_vector[2 + m_trump_suit_of_current_game] = std::vector<int>(48,-1);
 	std::vector<int> total_cards_in_melds(logic_vector.size(),0);
 	for(int r = 0; r < logic_vector.size(); r++) {
-		for(int c = 0; c < logic_vector[r].size(); c++) {
+		for(int c = 0; c < logic_vector[r].size(); c+=2) {
 			if(logic_vector[r][c] == 0) {
 				total_cards_in_melds[r]+=1;
 			}
@@ -350,10 +347,24 @@ void Player::Load_Meld_Cards_From_String(std::string &a_meld_string) {
 		meld_card_strings.back().push_back(card_str);
 		if(cur_meld_possibilities.size() == 1) {
 			if(no_of_cards_in_meld == total_cards_in_melds[cur_meld_possibilities[0]]) {
-				meld_card_strings.push_back(std::vector<std::string>());
 				meld_numbers_12_vec.push_back(cur_meld_possibilities[0]);
 				no_of_cards_in_meld = 0;
 				cur_meld_possibilities.clear();
+			}
+		} else if(cur_meld_possibilities.empty()) { // royal flush and royal marriage overlapping
+			for(int possible_meld: prev_meld_possibilities) {
+				if(no_of_cards_in_meld - 1 == total_cards_in_melds[possible_meld]) {
+					meld_card_strings.back().pop_back();
+					meld_card_strings.push_back(std::vector<std::string>());
+					meld_card_strings.back().push_back(card_str);
+					meld_numbers_12_vec.push_back(possible_meld);
+					no_of_cards_in_meld = 1;
+					for(int i = 0; i < logic_vector.size(); i++) {
+						if(logic_vector[i][id] == 0) {
+							cur_meld_possibilities.push_back(i);
+						}
+					}
+				}
 			}
 		}
 		prev_meld_possibilities = cur_meld_possibilities;
@@ -391,6 +402,20 @@ void Player::Load_Meld_Cards_From_String(std::string &a_meld_string) {
 				id = get_id_for_duplicate_cards(id);
 			}
 			id_to_change_cur_card_to[Card::Get_Card_Id_From_String(card_str)] = id;
+		}
+	}
+	//change meld card id if card has been used before in loading
+	for(std::vector<int> &card_ids: meld_card_ids) {
+		for(int& id: card_ids) {
+			if(a_cards_that_have_been_used[id]) {
+				id = get_id_for_duplicate_cards(id);
+			}
+		}
+	}
+	// update a_cards_that_have_been_used
+	for(std::vector<int> &card_ids: meld_card_ids) {
+		for(int& id: card_ids) {
+			a_cards_that_have_been_used[id] = true;
 		}
 	}
 

@@ -29,10 +29,10 @@ class Player {
 	virtual Card* Get_Card_To_Play(Card* a_lead_card_played) = 0; // Argument is NULL if the current player is lead player.
 	virtual int Get_Meld_To_Play() = 0;
 
-	void Load_Members_From_Serialization_String(std::string a_serialization_string);
-	void Load_Capture_Cards_From_String(std::string &a_meld_string);
-	void Load_Hand_Cards_From_String(std::string &a_meld_string);
-	void Load_Meld_Cards_From_String(std::string &a_meld_string);
+	void Load_Members_From_Serialization_String(std::string a_serialization_string, std::vector<bool> &a_cards_that_have_been_used);
+	void Load_Capture_Cards_From_String(std::string &a_meld_string, std::vector<bool> &a_cards_that_have_been_used);
+	void Load_Hand_Cards_From_String(std::string &a_meld_string, std::vector<bool> &a_cards_that_have_been_used);
+	void Load_Meld_Cards_From_String(std::string &a_meld_string, std::vector<bool> &a_cards_that_have_been_used);
 
    protected:
 	std::vector<Card*> m_hand_card_pile;

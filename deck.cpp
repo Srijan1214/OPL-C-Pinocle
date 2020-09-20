@@ -53,3 +53,16 @@ std::string Deck::Get_Stock_String() {
 	}
 	return ret_string;
 }
+
+void Deck::Load_Stock_Pile_From_String(std::string &a_stock_string, std::vector<bool> &a_cards_that_have_been_used) {
+	std::stringstream s(a_stock_string);
+	std::string card_str;
+	while (std::getline(s, card_str, ' ')) {
+		int id = Card::Get_Card_Id_From_String(card_str);
+		if(a_cards_that_have_been_used[id]) {
+			id+=1;
+		}
+		a_cards_that_have_been_used[id] = true;
+		m_card_list.push_back(new Card(id));
+	}
+}
