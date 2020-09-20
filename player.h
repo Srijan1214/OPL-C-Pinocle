@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <sstream>
 #include <vector>
 #include <algorithm>
 #include <climits>
@@ -18,12 +19,20 @@ class Player {
 	void Set_Trump_card(int);
 	
 	std::string Get_Console_Message();
+	std::string Get_Hand_Pile_String();
+	std::string Get_Capture_Pile_String();
+	std::string Get_Melds_String();
 
 	static const int m_meld_scores[9];
 	static const std::string m_meld_names[9];
 
 	virtual Card* Get_Card_To_Play(Card* a_lead_card_played) = 0; // Argument is NULL if the current player is lead player.
 	virtual int Get_Meld_To_Play() = 0;
+
+	void Load_Members_From_Serialization_String(std::string a_serialization_string);
+	void Load_Capture_Cards_From_String(std::string &a_meld_string);
+	void Load_Hand_Cards_From_String(std::string &a_meld_string);
+	void Load_Meld_Cards_From_String(std::string &a_meld_string);
 
    protected:
 	std::vector<Card*> m_hand_card_pile;
@@ -71,6 +80,7 @@ class Player {
 	// The rest are function only used by the Find_IndexMeldPair_Of_Card_To_Throw function.
 	std::vector<std::vector<int>> Get_Meld_Logic_Vector();
 	void add_to_meld_logic_vector(std::vector<std::vector<int>>& a_meld_logic_vector, std::vector<Card*>& a_card_pile);
+	void update_logic_vector_with_history(std::vector<std::vector<int>>& a_meld_logic_vector);
 	int Get_Best_Meld_If_Card_Thrown(std::vector<std::vector<int>>& a_meld_logic_vector, Card* a_card_ptr);
 	std::pair<int,int> Get_Best_MeldCardIndexPair_From_Logic(std::vector<std::vector<int>>& a_meld_logic_vector);
 

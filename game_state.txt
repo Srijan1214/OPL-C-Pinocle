@@ -1,0 +1,430 @@
+Enter index of Cards From Above: 1
+
+Computer turn.
+Computer played "9C", which is the smallest card, because it had no possibility of winning.
+
+--------------------------------Player 1 WINS BATTLE--------------------------------
+
+Do you want to meld this round (y/n)? y
+
+I recommend you present QS and JD as a "Pinochle" meld to earn 40 points.
+Index:       0  1  2  3  4  5  6  7  8  9  10          
+Hand-Pile:   XC QD KH XS JS JH JD QH KS QS XH  Melds:  
+
+
+Enter the sequences of indexes separated by a space (e.g 1 2 3): 6 9
+
+
+--------------------------------------------------------New Battle--------------------------------------------------------------------------------------------------
+Round: 1
+
+Human: Score: 51
+Hand: XC QD KH XS JS JH QH KS XH JC
+Capture Pile : AD 9C 
+Melds: JD QS
+
+Computer: Score: 0
+Hand: JC XC KH QH JH KC XD XH XS KC JD AH
+Capture Pile : 
+Melds: 
+
+Trump Card: QD
+Stocks: AC 9S XD AC KS AS 9D QS KD QC 9C KD JS QC 9S AS 9D AH 9H 9H AD 
+
+--------------------------------------------------------------------------------------
+
+Help Mode Recomendation.
+I recommend you play "QD" because it is the card resulting in the highest possible meld.
+
+Index:       0  1  2  3  4  5  7  8  10  11          6  9  
+Hand-Pile:   XC QD KH XS JS JH QH KS XH  JC  Melds:  JD QS 
+
+
+Enter index of Cards From Above: 0
+
+Computer turn.
+Computer played "JD" because it was the smallest greater card than the lead player's card.
+
+--------------------------------Player 2 WINS BATTLE--------------------------------
+
+The computer presented QH and KH as a "Marriage" meld to earn 20 points.
+
+--------------------------------------------------------New Battle--------------------------------------------------------------------------------------------------
+Round: 1
+
+Human: Score: 51
+Hand: JC QD KH XS JS JH QH KS XH 9H
+Capture Pile : AD 9C 
+Melds: JD QS
+
+Computer: Score: 32
+Hand: JC XC JH KC XD XH XS KC AH AD
+Capture Pile : XC JD 
+Melds: QH KH 
+
+Trump Card: QD
+Stocks: AC 9S XD AC KS AS 9D QS KD QC 9C KD JS QC 9S AS 9D AH 9H 
+
+--------------------------------------------------------------------------------------
+
+Computer turn.
+Computer played "AD", which is the greatest card. However, it has no melds available.
+
+Help Mode Recomendation.
+I recommend you play "9H", which is the smallest card, because you have no possibility of winning.
+
+Index:       0  1  2  3  4  5  7  8  10  11          6  9  
+Hand-Pile:   JC QD KH XS JS JH QH KS XH  9H  Melds:  JD QS 
+
+
+Enter index of Cards From Above: 11
+
+--------------------------------Player 2 WINS BATTLE--------------------------------
+
+Computer found no possible melds. So, it did not play any.
+
+--------------------------------------------------------New Battle--------------------------------------------------------------------------------------------------
+Round: 1
+
+Human: Score: 51
+Hand: JC QD KH XS JS JH QH KS XH AH
+Capture Pile : AD 9C 
+Melds: JD QS
+
+Computer: Score: 43
+Hand: JC XC JH KC XD XH XS KC AH 9H
+Capture Pile : XC JD AD 9H 
+Melds: QH KH 
+
+Trump Card: QD
+Stocks: AC 9S XD AC KS AS 9D QS KD QC 9C KD JS QC 9S AS 9D 
+
+--------------------------------------------------------------------------------------
+
+Computer turn.
+Computer played "XD", which is the greatest card. However, it has no melds available.
+
+Help Mode Recomendation.
+I recommend you play "JC", which is the smallest card, because you have no possibility of winning.
+
+Index:       0  1  2  3  4  5  7  8  10  11          6  9  
+Hand-Pile:   JC QD KH XS JS JH QH KS XH  AH  Melds:  JD QS 
+
+
+Enter index of Cards From Above: 0
+
+--------------------------------Player 2 WINS BATTLE--------------------------------
+
+Computer found no possible melds. So, it did not play any.
+
+--------------------------------------------------------New Battle--------------------------------------------------------------------------------------------------
+Round: 1
+
+Human: Score: 51
+Hand: AH QD KH XS JS JH QH KS XH AS
+Capture Pile : AD 9C 
+Melds: JD QS
+
+Computer: Score: 55
+Hand: JC XC JH KC 9H XH XS KC AH 9D
+Capture Pile : XC JD AD 9H XD JC 
+Melds: QH KH 
+
+Trump Card: QD
+Stocks: AC 9S XD AC KS AS 9D QS KD QC 9C KD JS QC 9S 
+
+--------------------------------------------------------------------------------------
+
+Computer turn.
+Computer played "AH" because it was the card resulting in the highest possible meld.
+
+Help Mode Recomendation.
+I recommend you play "JD" because it is the smallest card greater than the lead player's card.
+
+Index:       0  1  2  3  4  5  7  8  10  11          6  9  
+Hand-Pile:   AH QD KH XS JS JH QH KS XH  AS  Melds:  JD QS 
+
+
+Enter index of Cards From Above: 4
+
+--------------------------------Player 2 WINS BATTLE--------------------------------
+
+The computer presented 9D as a "Dix" meld to earn 10 points.
+
+--------------------------------------------------------New Battle--------------------------------------------------------------------------------------------------
+Round: 1
+
+Human: Score: 51
+Hand: AH QD KH XS AS JH QH KS XH QC
+Capture Pile : AD 9C 
+Melds: JD QS
+
+Computer: Score: 78
+Hand: JC XC JH KC 9H XH XS KC 9S
+Capture Pile : XC JD AD 9H XD JC AH JS 
+Melds: QH KH 9D 
+
+Trump Card: QD
+Stocks: AC 9S XD AC KS AS 9D QS KD QC 9C KD JS 
+
+--------------------------------------------------------------------------------------
+
+Computer turn.
+Computer played "9D", which is the greatest card. However, it has no melds available.
+
+Help Mode Recomendation.
+I recommend you play "JD" because it is the smallest card greater than the lead player's card.
+
+Index:       0  1  2  3  4  5  7  8  10  11          6  9  
+Hand-Pile:   AH QD KH XS AS JH QH KS XH  QC  Melds:  JD QS 
+
+
+Enter index of Cards From Above: 5
+
+--------------------------------Player 2 WINS BATTLE--------------------------------
+
+Computer found no possible melds. So, it did not play any.
+
+--------------------------------------------------------New Battle--------------------------------------------------------------------------------------------------
+Round: 1
+
+Human: Score: 51
+Hand: AH QD KH XS AS QC QH KS XH KD
+Capture Pile : AD 9C 
+Melds: JD QS
+
+Computer: Score: 80
+Hand: JC XC JH KC 9H XH XS KC 9S JS
+Capture Pile : XC JD AD 9H XD JC AH JS 9D JH 
+Melds: QH KH 
+
+Trump Card: QD
+Stocks: AC 9S XD AC KS AS 9D QS KD QC 9C 
+
+--------------------------------------------------------------------------------------
+
+Computer turn.
+Computer played "XC", which is the greatest card. However, it has no melds available.
+
+Help Mode Recomendation.
+I recommend you play "JD" because it is the smallest card greater than the lead player's card.
+
+Index:       0  1  2  3  4  5  7  8  10  11          6  9  
+Hand-Pile:   AH QD KH XS AS QC QH KS XH  KD  Melds:  JD QS 
+
+
+Enter index of Cards From Above: 5
+
+--------------------------------Player 2 WINS BATTLE--------------------------------
+
+Computer found no possible melds. So, it did not play any.
+
+--------------------------------------------------------New Battle--------------------------------------------------------------------------------------------------
+Round: 1
+
+Human: Score: 51
+Hand: AH QD KH XS AS KD QH KS XH QC
+Capture Pile : AD 9C 
+Melds: JD QS
+
+Computer: Score: 93
+Hand: JC JS JH KC 9H XH XS KC 9S 9C
+Capture Pile : XC JD AD 9H XD JC AH JS 9D JH XC QC 
+Melds: QH KH 
+
+Trump Card: QD
+Stocks: AC 9S XD AC KS AS 9D QS KD 
+
+--------------------------------------------------------------------------------------
+
+Computer turn.
+Computer played "XH", which is the greatest card. However, it has no melds available.
+
+Help Mode Recomendation.
+I recommend you play "AH" because it is the smallest card greater than the lead player's card.
+
+Index:       0  1  2  3  4  5  7  8  10  11          6  9  
+Hand-Pile:   AH QD KH XS AS KD QH KS XH  QC  Melds:  JD QS 
+
+
+Enter index of Cards From Above: 0
+
+--------------------------------Player 1 WINS BATTLE--------------------------------
+
+Do you want to meld this round (y/n)? y
+
+I recommend you present QS, QC, QH and QD as a "Four Queens" meld to earn 60 points.
+Index:       0  1  2  3  4  5  7  8  10          6  9  
+Hand-Pile:   QC QD KH XS AS KD QH KS XH  Melds:  JD QS 
+
+
+Enter the sequences of indexes separated by a space (e.g 1 2 3): 0 1 9 7
+
+
+--------------------------------------------------------New Battle--------------------------------------------------------------------------------------------------
+Round: 1
+
+Human: Score: 132
+Hand: KH XS AS KD KS XH KD
+Capture Pile : AD 9C XH AH 
+Melds: QC QD QH QS* JD QS*
+
+Computer: Score: 93
+Hand: JC JS JH KC 9H 9C XS KC 9S QS
+Capture Pile : XC JD AD 9H XD JC AH JS 9D JH XC QC 
+Melds: QH KH 
+
+Trump Card: QD
+Stocks: AC 9S XD AC KS AS 9D 
+
+--------------------------------------------------------------------------------------
+
+Help Mode Recomendation.
+I recommend you play "KD" because it is the card resulting in the highest possible meld.
+
+Index:       2  3  4  5  8  10  11          0  1  7  9   6  9   
+Hand-Pile:   KH XS AS KD KS XH  KD  Melds:  QC QD QH QS* JD QS* 
+
+
+Enter index of Cards From Above: 11
+
+Computer turn.
+Computer played "9H", which is the smallest card, because it had no possibility of winning.
+
+--------------------------------Player 1 WINS BATTLE--------------------------------
+
+Do you want to meld this round (y/n)? y
+
+I recommend you present QD and KD as a "Royal Marriage" meld to earn 40 points.
+Index:       2  3  4  5  8  10          0  1  7  9   6  9   
+Hand-Pile:   KH XS AS KD KS XH  Melds:  QC QD QH QS* JD QS* 
+
+
+Enter the sequences of indexes separated by a space (e.g 1 2 3): 5 1
+
+
+--------------------------------------------------------New Battle--------------------------------------------------------------------------------------------------
+Round: 1
+
+Human: Score: 176
+Hand: KH XS AS KS XH 9D
+Capture Pile : AD 9C XH AH KD 9H 
+Melds: QD* KD QC QD* QH QS* JD QS*
+
+Computer: Score: 93
+Hand: JC JS JH KC QS 9C XS KC 9S AS
+Capture Pile : XC JD AD 9H XD JC AH JS 9D JH XC QC 
+Melds: QH KH 
+
+Trump Card: QD
+Stocks: AC 9S XD AC KS 
+
+--------------------------------------------------------------------------------------
+
+Help Mode Recomendation.
+I recommend you play "KD" because it is the card resulting in the highest possible meld.
+
+Index:       2  3  4  8  10  11          1   5  0  1   7  9   6  9   
+Hand-Pile:   KH XS AS KS XH  9D  Melds:  QD* KD QC QD* QH QS* JD QS* 
+
+
+Enter index of Cards From Above: 11
+
+Computer turn.
+Computer played "9C", which is the smallest card, because it had no possibility of winning.
+
+--------------------------------Player 1 WINS BATTLE--------------------------------
+
+Do you want to meld this round (y/n)? y
+
+I recommend you present QS and KS as a "Marriage" meld to earn 20 points.
+Index:       2  3  4  8  10          1   5  0  1   7  9   6  9   
+Hand-Pile:   KH XS AS KS XH  Melds:  QD* KD QC QD* QH QS* JD QS* 
+
+
+Enter the sequences of indexes separated by a space (e.g 1 2 3): 8 9
+
+
+--------------------------------------------------------New Battle--------------------------------------------------------------------------------------------------
+Round: 1
+
+Human: Score: 196
+Hand: KH XS AS XH KS
+Capture Pile : AD 9C XH AH KD 9H 9D 9C 
+Melds: QD* KD KS QS* QC QD* QH QS* JD QS*
+
+Computer: Score: 93
+Hand: JC JS JH KC QS AS XS KC 9S AC
+Capture Pile : XC JD AD 9H XD JC AH JS 9D JH XC QC 
+Melds: QH KH 
+
+Trump Card: QD
+Stocks: AC 9S XD 
+
+--------------------------------------------------------------------------------------
+
+Help Mode Recomendation.
+I recommend you play "KD" because it is the card resulting in the highest possible meld.
+
+Index:       2  3  4  10  11          1   5  8  9   0  1   7  9   6  9   
+Hand-Pile:   KH XS AS XH  KS  Melds:  QD* KD KS QS* QC QD* QH QS* JD QS* 
+
+
+Enter index of Cards From Above: 4
+
+Computer turn.
+Computer played "9S", which is the smallest card, because it had no possibility of winning.
+
+--------------------------------Player 1 WINS BATTLE--------------------------------
+
+Do you want to meld this round (y/n)? y
+
+I recommend you present QH and KH as a "Marriage" meld to earn 20 points.
+Index:       2  3  4  10          1   5  8  9   0  1   7  9   6  9   
+Hand-Pile:   KH XS KS XH  Melds:  QD* KD KS QS* QC QD* QH QS* JD QS* 
+
+
+Enter the sequences of indexes separated by a space (e.g 1 2 3): 2 7
+
+
+--------------------------------------------------------New Battle--------------------------------------------------------------------------------------------------
+Round: 1
+
+Human: Score: 227
+Hand: XS KS XH XD
+Capture Pile : AD 9C XH AH KD 9H 9D 9C AS 9S 
+Melds: QD* KD KS QS* KH QH* QC QD* QH* QS* JD QS*
+
+Computer: Score: 93
+Hand: JC JS JH KC QS AS XS KC AC 9S
+Capture Pile : XC JD AD 9H XD JC AH JS 9D JH XC QC 
+Melds: QH KH 
+
+Trump Card: QD
+Stocks: AC 
+
+--------------------------------------------------------------------------------------
+
+Help Mode Recomendation.
+I recommend you play "XD" because it is the card resulting in the highest possible meld.
+
+Index:       3  4  10  11          1   5  8  9   2  7   0  1   7   9   6  9   
+Hand-Pile:   XS KS XH  XD  Melds:  QD* KD KS QS* KH QH* QC QD* QH* QS* JD QS* 
+
+
+Enter index of Cards From Above: 11
+
+Computer turn.
+Computer played "9S", which is the smallest card, because it had no possibility of winning.
+
+--------------------------------Player 1 WINS BATTLE--------------------------------
+
+Do you want to meld this round (y/n)? y
+
+I recommend you present QD and KD as a "Marriage" meld to earn 20 points.
+Index:       3  4  10          1   5  8  9   2  7   0  1   7   9   6  9   
+Hand-Pile:   XS KS XH  Melds:  QD* KD KS QS* KH QH* QC QD* QH* QS* JD QS* 
+
+
+Enter the sequences of indexes separated by a space (e.g 1 2 3): 5 1
+The Meld is not valid. Do you still want to meld (y/n)? 

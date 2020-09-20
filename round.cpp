@@ -3,9 +3,9 @@
 Round::Round() : m_players({&m_player1,&m_player2}), m_scores(2,0){
 }
 
-void Round::Play_A_Round(int a_cur_round) {
+void Round::Play_A_Round() {
 	Deal_Cards_From_Deck_To_Players();
-	if(a_cur_round == 0) {
+	if(m_cur_round_number == 1) {
 		Set_Cur_Turn_Through_Coin_Toss(m_player1);
 	}
 
@@ -16,6 +16,7 @@ void Round::Play_A_Round(int a_cur_round) {
 		player_ptr->Set_Trump_card(m_trump_card->Get_Card_Id());
 	}
 
+	// Load_From_File("serialize");
 	Print_Interface_Message();
 
 	for(int i = 0; i < 11; i++) {
@@ -35,6 +36,7 @@ void Round::Play_A_Round(int a_cur_round) {
 		std::cout << std::endl << "--------------------------------------------------------New Battle--------------------------------------------------------------------------------------------------" << std::endl;
 		Print_Interface_Message();
 	}
+	Save_To_File("serialize1");
 
 	// In the following battle, the stock pile is finished and the trump card is given to the chase player.
 	Play_Cards_Against_Each_Other();
@@ -168,4 +170,68 @@ void Round::Print_Interface_Message() {
 	// std::cout << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl;
 	std::cout << std::endl << "--------------------------------------------------------------------------------------";
 	std::cout << std::endl << std::endl;
+}
+
+void Round::Set_Cur_Round_Number(int a_cur_round) {
+	m_cur_round_number = a_cur_round;
+}
+
+void Round::Set_Previous_Scores(std::vector<int> a_prev_scores) {
+	m_prev_scores = a_prev_scores;
+}
+
+void Round::Save_To_File(std::string a_path) {
+	std::ofstream file;
+	file.open(a_path);
+
+	file << "Round: " << m_cur_round_number << "\n\n";
+
+	file << "Computer:\n";
+	file << "   Score: " << m_prev_scores[1] << " / " << m_scores[1] << "\n";
+	file << "   Hand: " <<m_players[1]->Get_Hand_Pile_String() << "\n";
+	file << "   Capture Pile : " <<m_players[1]->Get_Capture_Pile_String() << "\n";
+	file << "   Melds : " <<m_players[1]->Get_Melds_String() << "\n\n";
+
+	file << "Human:\n";
+	file << "   Score: " << m_prev_scores[0] << " / " << m_scores[0] << "\n";
+	file << "   Hand: " <<m_players[0]->Get_Hand_Pile_String() << "\n";
+	file << "   Capture Pile : " <<m_players[0]->Get_Capture_Pile_String() << "\n";
+	file << "   Melds : " <<m_players[0]->Get_Melds_String() << "\n\n";
+
+	file << "Trump Card: " <<m_trump_card->Get_Card_String_Value() << "\n";
+	file << "Stocks: " << m_deck.Get_Stock_String() << "\n\n";
+
+	file << "Next Player: ";
+	if(m_cur_lead_player == 0) {
+		file << "Human";
+	} else if(m_cur_lead_player == 1) {
+		file << "Computer";
+	}
+	file.close();
+}
+
+void Round::Load_From_File(std::string a_path) {
+	std::ifstream file(a_path);
+	std::string line;
+	std::string computer_load_string;
+	std::string human_load_string;
+
+	if(file.is_open()){
+		int line_number = 1;
+		while(std::getline(file, line)) {
+			if(line_number >= 5 && line_number < 8) {
+				computer_load_string += (line + '\n');
+			}
+			if(line_number >= 11 && line_number < 14) {
+				human_load_string += (line + '\n');
+			}
+			line_number++;
+		}
+	} else {
+		std::cout << "Error Opening file" << std::endl;
+		throw 123;
+	}
+
+	m_players[0]->Load_Members_From_Serialization_String(human_load_string);
+	m_players[1]->Load_Members_From_Serialization_String(computer_load_string);
 }

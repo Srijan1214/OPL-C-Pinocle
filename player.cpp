@@ -183,20 +183,47 @@ bool Player::Is_Meld_Allowed_By_History(std::vector<Card*> & a_meld_card_list, i
 std::string Player::Get_Console_Message() {
 	std::string message;
 	message += "Hand: ";
-	
-	for(int i = 0; i < m_hand_card_pile.size(); i++) {
-		if(m_hand_meld_involvement_list[i].empty()) {
-			message += m_hand_card_pile[i]->Get_Card_String_Value() + " ";
+	message += Get_Hand_Pile_String();
+
+	message+= "\nCapture Pile : ";
+	message+= Get_Capture_Pile_String();
+
+	message+= "\nMelds: ";
+	message+= Get_Melds_String();
+
+	message+="\n";
+
+	return message;
+}
+
+std::string Player::Get_Hand_Pile_String() {
+	std::string message;
+	for (int i = 0; i < m_hand_card_pile.size(); i++) {
+		if (m_hand_meld_involvement_list[i].empty()) {
+			message += m_hand_card_pile[i]->Get_Card_String_Value();
+			if(i != m_hand_card_pile.size() - 1) {
+				message += " ";
+			}
 		}
-	}	
-
-
-	message+= "\n Capture Pile : ";
-	for(Card* card_ptr:m_capture_card_pile) {
-		message+= card_ptr->Get_Card_String_Value() + ' ';
 	}
+	return message;
+}
 
-	message+= "\n Melds: ";
+std::string Player::Get_Capture_Pile_String() {
+	std::string message;
+	int i;
+	for(Card* card_ptr:m_capture_card_pile) {
+		message+= card_ptr->Get_Card_String_Value();
+		if(i != m_capture_card_pile.size() - 1) {
+			message += " ";
+		}
+		i++;
+	}
+	return message;
+}
+
+std::string Player::Get_Melds_String() {
+	std::string message;
 	for(int i = 0; i < m_current_meld_cards.size(); i++) {
 		for(auto& current_melds: m_current_meld_cards[i]) {
 			for(int& hand_index: current_melds) {
@@ -204,13 +231,221 @@ std::string Player::Get_Console_Message() {
 				if(m_hand_meld_involvement_list[hand_index].size() > 1) {
 					message += "*";
 				}
+				if(i == m_current_meld_cards.size() - 1 && hand_index == current_melds.back()) {
+					continue;	// do not add the last space if is the last character.
+				}
 				message += " ";
 			}
 		}
 	}
-	message+="\n";
-
 	return message;
+}
+
+void Player::Load_Members_From_Serialization_String(std::string a_serialization_string) {
+	auto trim = [](std::string& str) -> std::string& { 
+		// right trim
+		while (str.length () > 0 && (str [str.length ()-1] == ' ' || str [str.length ()-1] == '\t'))
+			str.erase (str.length ()-1, 1);
+
+		// left trim
+		while (str.length () > 0 && (str [0] == ' ' || str [0] == '\t'))
+			str.erase (0, 1);
+		return str;
+	};
+
+	int start, end;
+	start = a_serialization_string.find(':') + 1;
+	end = a_serialization_string.find('\n',start);
+	std::string hand_cards_string = a_serialization_string.substr(start, end - start);
+
+	start = a_serialization_string.find(':', end) + 1;
+	end = a_serialization_string.find('\n',start);
+	std::string capture_cards_string = a_serialization_string.substr(start, end - start);
+
+	start = a_serialization_string.find(':', end) + 1;
+	end = a_serialization_string.find('\n',start);
+	std::string meld_cards_string = a_serialization_string.substr(start, end - start);
+
+	trim(hand_cards_string);
+	trim(capture_cards_string);
+	trim(meld_cards_string);
+
+	// Clear m_hand_card_pile and m_capture_card_pile
+	m_hand_card_pile.clear();
+	m_hand_meld_involvement_list.clear();
+	m_capture_card_pile.clear();
+
+	Load_Hand_Cards_From_String(hand_cards_string);
+	Load_Capture_Cards_From_String(capture_cards_string);
+	Load_Meld_Cards_From_String(meld_cards_string);
+}
+
+void Player::Load_Hand_Cards_From_String(std::string &a_meld_string) {
+	std::stringstream s(a_meld_string);
+	std::string card_str;
+	std::vector<bool> has_card_been_seen(48, false);
+	while (std::getline(s, card_str, ' ')) {
+		int id = Card::Get_Card_Id_From_String(card_str);
+		if(has_card_been_seen[id]) {
+			id+=1;
+		} else {
+			has_card_been_seen[id] = true;
+		}
+		m_hand_card_pile.push_back(new Card(id));
+		m_hand_meld_involvement_list.push_back({});
+	}
+}
+
+void Player::Load_Capture_Cards_From_String(std::string &a_meld_string) {
+	std::stringstream s(a_meld_string);
+	std::string card_str;
+	std::vector<bool> has_card_been_seen(48, false);
+	while (std::getline(s, card_str, ' ')) {
+		int id = Card::Get_Card_Id_From_String(card_str);
+		if(has_card_been_seen[id]) {
+			id+=1;
+		} else {
+			has_card_been_seen[id] = true;
+		}
+		m_capture_card_pile.push_back(new Card(id));
+	}
+}
+
+void Player::Load_Meld_Cards_From_String(std::string &a_meld_string) {
+	std::vector<std::vector<int>> logic_vector = Get_Meld_Logic_Vector();
+	std::vector<int> total_cards_in_melds(logic_vector.size(),0);
+	for(int r = 0; r < logic_vector.size(); r++) {
+		for(int c = 0; c < logic_vector[r].size(); c++) {
+			if(logic_vector[r][c] == 0) {
+				total_cards_in_melds[r]+=1;
+			}
+		}
+	}
+	
+	std::vector<int> prev_meld_possibilities;
+	std::stringstream s(a_meld_string);
+	std::string card_str;
+	std::vector<std::vector<std::string>> meld_card_strings;
+	std::vector<int> meld_numbers_12_vec;
+
+	int no_of_cards_in_meld = 0;
+	while (std::getline(s, card_str, ' ')) {
+		no_of_cards_in_meld += 1;
+		int id = Card::Get_Card_Id_From_String(card_str);
+		std::vector<int> cur_meld_possibilities;
+		if(prev_meld_possibilities.empty()) {
+			for(int i = 0; i < logic_vector.size(); i++) {
+				if(logic_vector[i][id] == 0) {
+					cur_meld_possibilities.push_back(i);
+				}
+			}
+			meld_card_strings.push_back(std::vector<std::string>());
+		} else {
+			for(int& meld_number_12: prev_meld_possibilities) {
+				if(logic_vector[meld_number_12][id] == 0) {
+					cur_meld_possibilities.push_back(meld_number_12);
+				}
+			}
+		}
+		meld_card_strings.back().push_back(card_str);
+		if(cur_meld_possibilities.size() == 1) {
+			if(no_of_cards_in_meld == total_cards_in_melds[cur_meld_possibilities[0]]) {
+				meld_card_strings.push_back(std::vector<std::string>());
+				meld_numbers_12_vec.push_back(cur_meld_possibilities[0]);
+				no_of_cards_in_meld = 0;
+				cur_meld_possibilities.clear();
+			}
+		}
+		prev_meld_possibilities = cur_meld_possibilities;
+	}
+
+	// Now I have the data structure of meld_card_strings 
+	// and meld_numbers_12_vec to help me give the correct id to each card string.
+
+	// the following will keep the history of each card and 
+	// tells what id the current card should be.
+	std::vector<int> id_to_change_cur_card_to(48, -1);
+	std::vector<std::vector<int>> meld_card_ids;
+
+	auto get_id_for_duplicate_cards = [](int a_id){
+		if(a_id % 2 == 0){
+			return a_id + 1;
+		} else {
+			return a_id - 1;
+		}
+	};
+	for(int i = 0; i < meld_card_strings.size(); i++) {
+		meld_card_ids.push_back(std::vector<int>());
+		int cur_meld_12 = meld_numbers_12_vec[i];
+		for(std::string& card_str: meld_card_strings[i]) {
+			int id = Card::Get_Card_Id_From_String(card_str);
+			if(id_to_change_cur_card_to[id] != -1) {
+				id = id_to_change_cur_card_to[id];
+			}
+			if(logic_vector[cur_meld_12][id] != 0) {
+				id = get_id_for_duplicate_cards(id);
+			}
+			meld_card_ids.back().push_back(id);
+			logic_vector[cur_meld_12][id] = 1;
+			if(card_str.size() == 2) {
+				id = get_id_for_duplicate_cards(id);
+			}
+			id_to_change_cur_card_to[Card::Get_Card_Id_From_String(card_str)] = id;
+		}
+	}
+
+	// reset meld history
+	for(std::vector<bool> &ele1: m_which_card_used_for_meld) {
+		for(int j = 0; j < ele1.size(); j++) {
+			ele1[j] = false;
+		}
+	}
+	for(int& ele: m_no_of_times_meld_has_been_played) {
+		ele = 0;
+	}
+	// update meld history
+	for(int i = 0; i < meld_card_ids.size(); i++) {
+		int meld_num_12 = meld_numbers_12_vec[i];
+		for(int card_id : meld_card_ids[i]) {
+			m_which_card_used_for_meld[TO9(meld_num_12)][card_id] = true;
+		}
+		m_no_of_times_meld_has_been_played[TO9(meld_num_12)]++;
+	}
+
+	// now simply update m_current_meld_cards and m_hand_meld_involvement_list
+
+	// create the cards and add them to m_hand_card_pile and m_hand_meld_involvement_list
+	std::vector<int> id_to_index(48, -1);
+	for (std::vector<int>& ele : meld_card_ids){
+		for(int& card_id: ele) {
+			int index;
+			if(id_to_index[card_id] == -1) {
+				index = m_hand_card_pile.size();
+				m_hand_card_pile.push_back(new Card(card_id));
+				m_hand_meld_involvement_list.push_back({});
+				id_to_index[card_id] = index;
+			}
+		}
+	}
+
+	// reset m_current_meld_cards
+	for(std::vector<std::vector<int>>& ele: m_current_meld_cards) {
+		ele.clear();
+	}
+	// update the m_current_meld_cards and m_hand_meld_involvement_list
+	for(int i = 0; i < meld_card_ids.size(); i++) {
+		int meld_num_12 = meld_numbers_12_vec[i];
+		std::vector<int> index_vector;
+		for(int& card_id: meld_card_ids[i]) {
+			index_vector.push_back(id_to_index[card_id]);
+		}
+		m_current_meld_cards[meld_num_12].push_back(index_vector);
+		for(int i = 0; i < index_vector.size(); i++) {
+			int position_in_melds = m_current_meld_cards[meld_num_12].size() - 1;
+			m_hand_meld_involvement_list[index_vector[i]].push_back({meld_num_12,position_in_melds, i});
+		}
+	}
+
 }
 
 std::vector<std::vector<int>> Player::Get_Meld_Logic_Vector() {
@@ -251,6 +486,11 @@ std::vector<std::vector<int>> Player::Get_Meld_Logic_Vector() {
 	std::vector<std::vector<int>> meld_logic_vector(12, std::vector<int>(48,-1));
 	int i = 0;
 	for(std::vector<int> &requirements: all_requirements) {
+		if( i == (2 + m_trump_suit_of_current_game)) {
+			// skip the duplicate flush of royal flush
+			// make all the values 0 so that to satisfy the meld, all the cards are needed which is immpossible.
+			meld_logic_vector[i] = std::vector<int>(48, 0);
+		}
 		for(int& index: requirements) {
 			// Two cards needed are sequentially stored.
 			meld_logic_vector[i][index*2] = 0;
@@ -273,13 +513,23 @@ int Player::TO9(int a_12_based_index) {
 }
 
 void Player::add_to_meld_logic_vector(std::vector<std::vector<int>>& a_meld_logic_vector, std::vector<Card*>& a_card_pile) {
-	for(Card* card_ptr: a_card_pile) {
-		for(int i = 0; i < 12; i ++) {
+	for(int i = 0; i < 12; i ++) {
+		for(Card* card_ptr: a_card_pile) {
 			if (m_which_card_used_for_meld[TO9(i)][card_ptr->Get_Card_Id()] == false) {
 				int& ele = a_meld_logic_vector[i][card_ptr->Get_Card_Id()];
 				if(ele >=0 ) {
 					ele++;
 				}
+			}
+		}
+	}
+}
+
+void Player::update_logic_vector_with_history(std::vector<std::vector<int>>& a_meld_logic_vector) {
+	for(int i = 0; i < 12; i ++) {
+		for(int id = 0; id < 48; id++) {
+			if (m_which_card_used_for_meld[TO9(i)][id] == true) {
+				a_meld_logic_vector[i][id] = 0;
 			}
 		}
 	}
@@ -376,6 +626,10 @@ std::pair<std::vector<int>, int> Player::Get_Indexes_And_Meld_Number12_Best_Meld
 	std::vector<std::vector<int>> meld_logic_vector = Get_Meld_Logic_Vector();
 
 	add_to_meld_logic_vector(meld_logic_vector, m_hand_card_pile);
+
+	// update meld_logic_according to meld history.
+	update_logic_vector_with_history(meld_logic_vector);
+	
 
 	int max_meld_score = INT_MIN;
 	int meld_number_played = -1;

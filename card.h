@@ -18,10 +18,7 @@ class Card {
 	static int Get_Suit_From_Id(int a_id);
 	static int Get_Weight_From_Id(int a_id);
 	static std::string Get_String_From_Id(int);
-	std::string m_card_type;
 
-   private:
-	// char m_suit_char_arr[4] = {'S', 'C', 'H', 'D'};
-	// char m_face_char_arr[6] = {'9', 'X', 'J', 'Q', 'K', 'A'};
-	// int m_face_weights[6] = {0, 10, 2, 3, 4, 11};
+	static int Get_Card_Id_From_String(std::string &a_card_str);
+	std::string m_card_type;
 };

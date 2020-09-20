@@ -72,6 +72,28 @@ int Card::Get_Weight_From_Id(int a_id) {
 	return m_face_weights[Get_Face_From_Id(a_id)];
 }
 
+int Card::Get_Card_Id_From_String(std::string &a_card_str) {
+	int face = -1, suit = -1;
+
+	switch (a_card_str[0]) {
+		case '9': face = 0; break;
+		case 'X': face = 1; break;
+		case 'J': face = 2; break;
+		case 'Q': face = 3; break;
+		case 'K': face = 4; break;
+		case 'A': face = 5; break;
+		default: break;
+	}
+	switch (a_card_str[1]) {
+		case 'S': suit = 0; break;
+		case 'C': suit = 1; break;
+		case 'H': suit = 2; break;
+		case 'D': suit = 3; break;
+		default: break;
+	}
+	return suit * 12 + face * 2;
+}
+
 int Card::Get_Card_Id() {
 	return m_id;
 }
