@@ -57,7 +57,9 @@ Card* Human::Get_Card_To_Play(Card* a_lead_card_played) {
 	int total_cards = m_hand_card_pile.size();
 
 	do {
-		Print_Computer_Card_Recomendation(a_lead_card_played);
+		if(m_help_mode) {
+			Print_Computer_Card_Recomendation(a_lead_card_played);
+		}
 		Print_Hand_and_Meld_With_Id();
 		std::cout << "Enter index of Cards From Above: ";
 		index = Get_Integer_Input_From_User();
@@ -102,6 +104,10 @@ int Human::Get_Meld_To_Play() {
 	char meld_yes_no;
 	int meld_number_9 = -1;
 
+	if(m_help_mode) {
+		Print_Computer_Meld_Recommendation();
+	}
+
 	std::vector<int> user_input_indexes;
 	std::vector<int> hand_pile_user_selection_indexes;
 	do{
@@ -115,10 +121,7 @@ int Human::Get_Meld_To_Play() {
 		return 9;
 	}
 	do {
-		Print_Computer_Meld_Recommendation();
-		if(m_help_mode) {
-			Print_Hand_and_Meld_With_Id();
-		}
+		Print_Hand_and_Meld_With_Id();
 
 		std::string user_meld_input;
 		std::cout << "Enter the sequences of indexes separated by a space (e.g 1 2 3): ";
