@@ -45,4 +45,6 @@ class Round {
 	void Print_Player1_Hand();
 	void Print_Player2_Hand();
 	void Print_Interface_Message();
+
+	void Ask_Input_From_Menu(int a_cur_player);
 };

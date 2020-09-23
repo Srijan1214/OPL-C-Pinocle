@@ -325,3 +325,55 @@ void Round::Reset_Round() {
 		player_ptr->Reset_Meld_History();
 	}
 }
+
+void Round::Ask_Input_From_Menu(int a_cur_player) {
+	auto get_int_input_from_user = []() {
+		int ret_val = -1;
+		std::string user_input;
+
+		std::cin.clear();
+		std::getline(std::cin, user_input);
+
+		try {
+			ret_val = std::stoi(user_input);
+		} catch (const std::invalid_argument&) {
+		} catch (const std::out_of_range&) {
+		}
+
+		return ret_val;
+	};
+	std::cout << "1. Save the game" << std::endl;
+	std::cout << "2. Make a move" << std::endl;
+	if(a_cur_player == 0) {
+		std::cout << "3. Ask for help" << std::endl;
+		std::cout << "4 .Quit the game" << std::endl;
+	}else {
+		std::cout << "3 .Quit the game" << std::endl;
+	}
+	std::cout << std::endl;
+
+	std::cout << "Enter the option number from 1 - 4: ";
+	const int max_option_number = (a_cur_player == 0) ? 4 : 3;
+
+	int user_input;
+	do{
+		user_input = get_int_input_from_user();
+	} while (!(user_input >= 1 && user_input <= max_option_number));
+
+
+	m_players[a_cur_player]->Turn_Off_Help_Mode();
+	if (user_input == 1) {
+		// Save Game
+	} else if (user_input == 2) {
+		return;
+	} else if (user_input == 3) {
+		if(a_cur_player == 0) {
+			m_players[a_cur_player]->Turn_On_Help_Mode();
+			return;
+		} else {
+			exit(EXIT_SUCCESS);
+		}
+	} else if (user_input == 4) {
+		exit(EXIT_SUCCESS);
+	}
+}
