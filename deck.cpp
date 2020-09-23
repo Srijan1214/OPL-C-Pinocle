@@ -24,6 +24,7 @@ Deck::Deck() : m_card_list(48) {
 	// Decided to seed random in this class. Might change later if needed.
 	// std::srand(unsigned(std::time(0)));
 	std::srand(17);
+	// std::srand(19);
 
 	Shuffle_Deck();
 }

@@ -116,7 +116,9 @@ int Human::Get_Meld_To_Play() {
 	}
 	do {
 		Print_Computer_Meld_Recommendation();
-		Print_Hand_and_Meld_With_Id();
+		if(m_help_mode) {
+			Print_Hand_and_Meld_With_Id();
+		}
 
 		std::string user_meld_input;
 		std::cout << "Enter the sequences of indexes separated by a space (e.g 1 2 3): ";

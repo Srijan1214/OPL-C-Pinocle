@@ -16,7 +16,7 @@ void Round::Play_A_Round() {
 		player_ptr->Set_Trump_card(m_trump_card->Get_Card_Id());
 	}
 
-	// Load_From_File("serialize1");
+	Load_From_File("serialize");
 
 	while(m_deck.Get_Stock_Size() > 1) {
 		Play_Turn_And_Pick_Up_From_Stock();

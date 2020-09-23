@@ -38,11 +38,16 @@ class Player {
 	std::vector<Card*> Pop_All_Cards_From_Capture_Pile();
 	void Reset_Meld_History();
 
+	void Turn_On_Help_Mode();
+	void Turn_Off_Help_Mode();
+
    protected:
 	std::vector<Card*> m_hand_card_pile;
 	std::vector<std::vector<std::array<int,3>>> m_hand_meld_involvement_list;
 	std::vector<std::vector<std::vector<int>>> m_current_meld_cards;
 	void Remove_Card_From_Pile(int index);
+
+	bool m_help_mode;
 
 	// Pile that stores the capture cards
 	std::vector<Card*> m_capture_card_pile;

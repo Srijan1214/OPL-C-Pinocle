@@ -15,7 +15,8 @@ Player::Player()
 	: m_current_meld_cards(12),
 	  m_no_of_times_meld_has_been_played(9, 0),
 	  m_which_card_used_for_meld(9, std::vector<bool>(48, false)),
-	  m_trump_suit_of_current_game(-1) {}
+	  m_trump_suit_of_current_game(-1),
+	  m_help_mode(false) {}
 
 void Player::Give_Card_To_Player(Card* a_card_ptr) {
 	m_hand_card_pile.push_back(a_card_ptr);
@@ -329,23 +330,32 @@ void Player::Load_Meld_Cards_From_String(std::string &a_meld_string, std::vector
 		}
 	}
 	
-	std::vector<int> prev_meld_possibilities;
 	std::stringstream s(a_meld_string);
 	std::string card_str;
 	std::vector<std::vector<std::string>> meld_card_strings;
 	std::vector<int> meld_numbers_12_vec;
+	std::vector<int> cur_meld_ids;
 
-	int no_of_cards_in_meld = 0;
 	while (std::getline(s, card_str, ' ')) {
-		no_of_cards_in_meld += 1;
+		if(card_str == " ")  {
+			continue;
+		}
 		int id = Card::Get_Card_Id_From_String(card_str);
+		cur_meld_ids.push_back(id);
 		if(meld_card_strings.empty()) {
 			meld_card_strings.push_back({});
 		}
 		if(card_str.back() == ',') {
-
+			meld_numbers_12_vec.push_back(Get_Meld_Type_12_From_Cards(cur_meld_ids));
+			cur_meld_ids.clear();
+			card_str.pop_back();
+			meld_card_strings.back().push_back(card_str);
+			meld_card_strings.push_back({});
+		} else {
+			meld_card_strings.back().push_back(card_str);
 		}
 	}
+	meld_numbers_12_vec.push_back(Get_Meld_Type_12_From_Cards(cur_meld_ids));
 
 	// Now I have the data structure of meld_card_strings 
 	// and meld_numbers_12_vec to help me give the correct id to each card string.
@@ -381,12 +391,13 @@ void Player::Load_Meld_Cards_From_String(std::string &a_meld_string, std::vector
 			meld_card_ids.back().push_back(id);
 			logic_vector[cur_meld_12][id] = 1;
 			if(card_str.size() == 2) {
+				id = get_id_for_duplicate_cards(id);
+			} else if (card_str.size() == 3) {
 				if(count_of_ids_for_stared_cards[id] == -1) {
 					count_of_ids_for_stared_cards[id] = 1;
 				} else{
 					count_of_ids_for_stared_cards[id]++;
 				}
-				id = get_id_for_duplicate_cards(id);
 			}
 			id_to_change_cur_card_to[Card::Get_Card_Id_From_String(card_str)] = id;
 		}
@@ -854,4 +865,12 @@ void Player::Reset_Meld_History() {
 			m_which_card_used_for_meld[meld_number_9][card_id] = false;
 		}
 	}
+}
+
+void Player::Turn_On_Help_Mode() {
+	m_help_mode = true;
+}
+
+void Player::Turn_Off_Help_Mode() {
+	m_help_mode = false;
 }
