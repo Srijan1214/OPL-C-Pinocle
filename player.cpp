@@ -382,6 +382,7 @@ void Player::Load_Meld_Cards_From_String(std::string &a_meld_string, std::vector
 	std::vector<int> id_to_change_cur_card_to(48, -1);
 	std::vector<std::vector<int>> meld_card_ids;
 
+	// a lambda function to change the id to a duplicate card
 	auto get_id_for_duplicate_cards = [](int a_id){
 		if(a_id % 2 == 0){
 			return a_id + 1;
@@ -389,6 +390,10 @@ void Player::Load_Meld_Cards_From_String(std::string &a_meld_string, std::vector
 			return a_id - 1;
 		}
 	};
+
+	// the following keeps the count of the id for the stared id
+	std::vector<int> count_of_ids_for_stared_cards(48, -1);
+
 	for(int i = 0; i < meld_card_strings.size(); i++) {
 		meld_card_ids.push_back(std::vector<int>());
 		int cur_meld_12 = meld_numbers_12_vec[i];
@@ -403,11 +408,44 @@ void Player::Load_Meld_Cards_From_String(std::string &a_meld_string, std::vector
 			meld_card_ids.back().push_back(id);
 			logic_vector[cur_meld_12][id] = 1;
 			if(card_str.size() == 2) {
+				if(count_of_ids_for_stared_cards[id] == -1) {
+					count_of_ids_for_stared_cards[id] = 1;
+				} else{
+					count_of_ids_for_stared_cards[id]++;
+				}
 				id = get_id_for_duplicate_cards(id);
 			}
 			id_to_change_cur_card_to[Card::Get_Card_Id_From_String(card_str)] = id;
 		}
 	}
+
+	// do not allow cards that contains * to only have 1 id.
+	// i.e cards that have * will need to have multiple id's.
+	auto update_stared_id_with_insufficient_count =
+		[&](int starred_id) {
+			for (int i = 0; i < meld_card_ids.size(); i++) {
+				int cur_meld_12 = meld_numbers_12_vec[i];
+				for (int& card_id : meld_card_ids[i]) {
+					if (get_id_for_duplicate_cards(card_id) == starred_id) {
+						if(logic_vector[TO9(cur_meld_12)][starred_id] == 0) {
+							card_id = starred_id;
+							return;
+						}
+					}
+				}
+			}
+		};
+
+
+	for(int stared_id = 0; stared_id < count_of_ids_for_stared_cards.size(); stared_id++) {
+		if(count_of_ids_for_stared_cards[stared_id] != 1) {
+			// This entire loop is only if the count of a certain stared meld card is 1.
+			continue;
+		}
+		update_stared_id_with_insufficient_count(stared_id);
+		
+	}
+
 	//change meld card id if card has been used before in loading
 	for(std::vector<int> &card_ids: meld_card_ids) {
 		for(int& id: card_ids) {
