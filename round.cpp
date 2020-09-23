@@ -16,61 +16,33 @@ void Round::Play_A_Round() {
 		player_ptr->Set_Trump_card(m_trump_card->Get_Card_Id());
 	}
 
-	Load_From_File("serialize1");
-	Print_Interface_Message();
+	// Load_From_File("serialize1");
 
-	for(int i = 0; i < 11; i++) {
-		// The following function will update lead and chase player based on the outcome of the battle.
-		Play_Cards_Against_Each_Other();
-		//lead player declares meld
-		// Print_Interface_Message();
-		int meld_index = m_players[m_cur_lead_player]->Get_Meld_To_Play();
-		if (meld_index >= 0 && meld_index < 9) {
-			m_scores[m_cur_lead_player] += Player::m_meld_scores[meld_index];
-		}
-		m_players[m_cur_lead_player]->Set_Round_Score(m_scores[m_cur_lead_player]);
-
-		const int chase_player = m_cur_lead_player ^ 1;
-		m_players[m_cur_lead_player]->Give_Card_To_Player(m_deck.Pop_Top_Card());
-		m_players[chase_player]->Give_Card_To_Player(m_deck.Pop_Top_Card());
+	while(m_deck.Get_Stock_Size() > 1) {
+		Play_Turn_And_Pick_Up_From_Stock();
 		std::cout << std::endl << "--------------------------------------------------------New Battle--------------------------------------------------------------------------------------------------" << std::endl;
-		Print_Interface_Message();
 	}
 	// Save_To_File("serialize1");
 
-	// In the following battle, the stock pile is finished and the trump card is given to the chase player.
-	Play_Cards_Against_Each_Other();
-	//lead player declares meld
-	// Print_Interface_Message();
-	int meld_index = m_players[m_cur_lead_player]->Get_Meld_To_Play();
-	if (meld_index >= 0 && meld_index < 9) {
-		m_scores[m_cur_lead_player] += Player::m_meld_scores[meld_index];
+	if(m_deck.Get_Stock_Size() == 1) {
+		Play_Turn_And_Dont_Pick_Up_From_Stock();
+		const int chase_player = m_cur_lead_player ^ 1;
+		m_players[m_cur_lead_player]->Give_Card_To_Player(m_deck.Pop_Top_Card());
+		m_players[chase_player]->Give_Card_To_Player(m_trump_card);
+
+		std::cout << std::endl << "----------------------------------------------------------------------------------------------------------------------------------------------------------" << std::endl;
+		std::cout << "------------------------------------------------------------------------STOCK PILE EMPTIED----------------------------------------------------------------------------------" << std::endl;
+		std::cout << "----------------------------------------------------------------------------------------------------------------------------------------------------------" << std::endl;
 	}
-	m_players[m_cur_lead_player]->Set_Round_Score(m_scores[m_cur_lead_player]);
-
-	const int chase_player = m_cur_lead_player ^ 1;
-	m_players[m_cur_lead_player]->Give_Card_To_Player(m_deck.Pop_Top_Card());
-	m_players[chase_player]->Give_Card_To_Player(m_trump_card);
-
-	std::cout << std::endl << "----------------------------------------------------------------------------------------------------------------------------------------------------------" << std::endl;
-	std::cout << "------------------------------------------------------------------------STOCK PILE EMPTIED----------------------------------------------------------------------------------" << std::endl;
-	std::cout << "----------------------------------------------------------------------------------------------------------------------------------------------------------" << std::endl;
 
 	//From now on cards aren't picked up from the stock pile.
-	for(int i = 0; i < 12; i++) {
-		// The following function will update lead and chase player based on the outcome of the battle.
-		std::cout << std::endl << "--------------------------------------------------------New Battle--------------------------------------------------------------------------------------------------" << std::endl;
-		Print_Interface_Message();
-		Play_Cards_Against_Each_Other();
-		//lead player declares meld
-		// Print_Interface_Message();
-		meld_index = m_players[m_cur_lead_player]->Get_Meld_To_Play();
-		if (meld_index >= 0 && meld_index < 9) {
-			m_scores[m_cur_lead_player] += Player::m_meld_scores[meld_index];
-		}
+	while(m_players[m_cur_lead_player]->Get_No_Of_Remaining_Cards() > 0) {
+		Play_Turn_And_Dont_Pick_Up_From_Stock();
 		m_players[m_cur_lead_player]->Set_Round_Score(m_scores[m_cur_lead_player]);
 	}
 
+	// Reset Everything to make the next round ready
+	Reset_Round();
 }
 
 void Round::Play_Cards_Against_Each_Other() {
@@ -315,4 +287,41 @@ void Round::Load_From_File(std::string a_path) {
 	m_scores[1] = computer_round_score;
 
 	m_cur_round_number = round_number;
+}
+
+void Round::Play_Turn_And_Dont_Pick_Up_From_Stock() {
+	Print_Interface_Message();
+	// The following function will update lead and chase player based on the outcome of the battle.
+	Play_Cards_Against_Each_Other();
+	//lead player declares meld
+	// Print_Interface_Message();
+	int meld_index = m_players[m_cur_lead_player]->Get_Meld_To_Play();
+	if (meld_index >= 0 && meld_index < 9) {
+		m_scores[m_cur_lead_player] += Player::m_meld_scores[meld_index];
+	}
+	m_players[m_cur_lead_player]->Set_Round_Score(m_scores[m_cur_lead_player]);
+}
+
+void Round::Play_Turn_And_Pick_Up_From_Stock() {
+	Play_Turn_And_Dont_Pick_Up_From_Stock();
+	const int chase_player = m_cur_lead_player ^ 1;
+	m_players[m_cur_lead_player]->Give_Card_To_Player(m_deck.Pop_Top_Card());
+	m_players[chase_player]->Give_Card_To_Player(m_deck.Pop_Top_Card());
+}
+
+void Round::Reset_Round() {
+	// Put all cards back in deck
+	for(Player* player_ptr: m_players) {
+		std::vector<Card*> capture_pile_cards = player_ptr->Pop_All_Cards_From_Capture_Pile();
+		for(Card* card_ptr: capture_pile_cards) {
+			m_deck.Put_Card_Back_In_Deck(card_ptr);
+		}
+	}
+	if(m_deck.Get_Stock_Size() != 48) {
+		throw 123; // assert that all the cards are restored
+	}
+	// Reset Meld history for both players
+	for(Player* player_ptr: m_players) {
+		player_ptr->Reset_Meld_History();
+	}
 }

@@ -38,7 +38,7 @@ void Human::Print_Hand_and_Meld_With_Id() {
 					cards_string += "*";
 				}
 				if(hand_index >= 10) {
-					index_string+= " ";
+					cards_string+= " ";
 				}
 				// std::cout << " ";
 				index_string += " "; 

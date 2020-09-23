@@ -25,6 +25,8 @@ class Round {
 	void Set_Cur_Turn_Through_Coin_Toss(const Human& a_human_player);
 	const std::vector<int> &Get_Scores() const;
 
+	void Reset_Round();
+
 	void Set_Cur_Round_Number(int a_cur_round);
 	void Set_Previous_Scores(std::vector<int> a_prev_scores);
 	void Save_To_File(std::string a_path);
@@ -37,6 +39,8 @@ class Round {
 	Card* m_trump_card;
 	void Pick_Up_Trump_Card();
 	void Play_Cards_Against_Each_Other();
+	void Play_Turn_And_Pick_Up_From_Stock();
+	void Play_Turn_And_Dont_Pick_Up_From_Stock();
 
 	void Print_Player1_Hand();
 	void Print_Player2_Hand();

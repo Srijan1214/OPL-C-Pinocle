@@ -163,6 +163,10 @@ void Player::Update_Meld_History(std::vector<Card*> & a_meld_card_list, int a_me
 	m_no_of_times_meld_has_been_played[a_meld_number_9]++;
 	for(Card* card_ptr: a_meld_card_list) {
 		m_which_card_used_for_meld[a_meld_number_9][card_ptr->Get_Card_Id()] = true;
+		// if Royal Flush declared, then don't allow Royal Marriage of the same cards for the rest of the game
+		if(a_meld_number_9 == 0) {
+			m_which_card_used_for_meld[1][card_ptr->Get_Card_Id()] = true;
+		}
 	}
 }
 
@@ -565,11 +569,11 @@ int Player::Get_Best_Meld_If_Card_Thrown(
 
 	int max_meld_score = INT_MIN;
 	int meld_number_played = -1;
-	std::vector<std::vector<int>> temp_vector = a_meld_logic_vector;
+	std::vector<std::vector<int>> temp_logic_vector = a_meld_logic_vector;
 	for (int i = 0; i < 12; i++) {
 		if (m_which_card_used_for_meld[TO9(i)][a_card_ptr->Get_Card_Id()] ==
 			false) {
-			int& ele = temp_vector[i][a_card_ptr->Get_Card_Id()];
+			int& ele = temp_logic_vector[i][a_card_ptr->Get_Card_Id()];
 			if (ele > 0) {
 				ele--;
 			}
@@ -577,9 +581,9 @@ int Player::Get_Best_Meld_If_Card_Thrown(
 	}
 	for (int i = 0; i < 12; i++) {
 		for (int j = 0; j < 48; j++) {
-			int& ele1 = temp_vector[i][j];
+			int& ele1 = temp_logic_vector[i][j];
 			j++;
-			int& ele2 = temp_vector[i][j];
+			int& ele2 = temp_logic_vector[i][j];
 			if (ele1 == 0 && ele2 == 0) {
 				break;
 			}
@@ -817,4 +821,26 @@ void Player::Remove_Card_From_Pile(int a_index) {
 	m_hand_card_pile.pop_back();
 	m_hand_meld_involvement_list[a_index] = m_hand_meld_involvement_list.back();
 	m_hand_meld_involvement_list.pop_back();
+}
+
+int Player::Get_No_Of_Remaining_Cards() {
+	return m_hand_card_pile.size();
+}
+
+// Only called when the round ends and the cards are placed back on the deck
+std::vector<Card*> Player::Pop_All_Cards_From_Capture_Pile() {
+	std::vector<Card*> ret_vec = m_capture_card_pile;
+	m_capture_card_pile.clear();
+	return ret_vec;
+}
+
+void Player::Reset_Meld_History() {
+	for(int& number_for_meld: m_no_of_times_meld_has_been_played){
+		number_for_meld = 0;
+	}
+	for(int meld_number_9 = 0; meld_number_9 < m_which_card_used_for_meld.size(); meld_number_9++) {
+		for(int card_id = 0; card_id < 48; card_id++) {
+			m_which_card_used_for_meld[meld_number_9][card_id] = false;
+		}
+	}
 }

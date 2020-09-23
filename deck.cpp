@@ -66,3 +66,7 @@ void Deck::Load_Stock_Pile_From_String(std::string &a_stock_string, std::vector<
 		m_card_list.push_back(new Card(id));
 	}
 }
+
+int Deck::Get_Stock_Size() {
+	return m_card_list.size();
+}

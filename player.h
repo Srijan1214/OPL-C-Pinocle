@@ -34,6 +34,10 @@ class Player {
 	void Load_Hand_Cards_From_String(std::string &a_meld_string, std::vector<bool> &a_cards_that_have_been_used);
 	void Load_Meld_Cards_From_String(std::string &a_meld_string, std::vector<bool> &a_cards_that_have_been_used);
 
+	int Get_No_Of_Remaining_Cards();
+	std::vector<Card*> Pop_All_Cards_From_Capture_Pile();
+	void Reset_Meld_History();
+
    protected:
 	std::vector<Card*> m_hand_card_pile;
 	std::vector<std::vector<std::array<int,3>>> m_hand_meld_involvement_list;
