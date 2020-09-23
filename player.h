@@ -52,6 +52,7 @@ class Player {
 	std::vector<std::vector<bool>> m_which_card_used_for_meld;
 	
 	int Get_Meld_Type_12_From_Cards(std::vector<Card*> &);
+	int Get_Meld_Type_12_From_Cards(std::vector<int> &);
 	int m_trump_suit_of_current_game;
 	int m_trump_card_id;
 	int m_round_score;

@@ -37,7 +37,6 @@ void Player::Set_Trump_card(int a_trump_card) {
 }
 
 int Player::Get_Meld_Type_12_From_Cards(std::vector<Card*>& a_meld_card_list) {
-	// contains logic to detect if meld exists
 	std::vector<int> meld_card_identifiers(a_meld_card_list.size());
 	for (int i = 0; i < a_meld_card_list.size(); i++) {
 		int card_id = a_meld_card_list[i]->Get_Card_Id();
@@ -50,24 +49,31 @@ int Player::Get_Meld_Type_12_From_Cards(std::vector<Card*>& a_meld_card_list) {
 		}
 	}
 
-	std::sort(meld_card_identifiers.begin(),meld_card_identifiers.end());
+	return Get_Meld_Type_12_From_Cards(meld_card_identifiers);
+}
+
+int Player::Get_Meld_Type_12_From_Cards(std::vector<int>& a_meld_card_identifiers) {
+	// contains logic to detect if meld exists
+
+
+	std::sort(a_meld_card_identifiers.begin(),a_meld_card_identifiers.end());
 
 	//Check for flush
-	if(meld_card_identifiers.size() == 5) {
-		const int ten_face = Card::Get_Face_From_Id(meld_card_identifiers[0]);
-		const int ten_suit = Card::Get_Suit_From_Id(meld_card_identifiers[0]);
+	if(a_meld_card_identifiers.size() == 5) {
+		const int ten_face = Card::Get_Face_From_Id(a_meld_card_identifiers[0]);
+		const int ten_suit = Card::Get_Suit_From_Id(a_meld_card_identifiers[0]);
 
-		const int jack_face = Card::Get_Face_From_Id(meld_card_identifiers[1]);
-		const int jack_suit = Card::Get_Suit_From_Id(meld_card_identifiers[1]);
+		const int jack_face = Card::Get_Face_From_Id(a_meld_card_identifiers[1]);
+		const int jack_suit = Card::Get_Suit_From_Id(a_meld_card_identifiers[1]);
 
-		const int queen_face = Card::Get_Face_From_Id(meld_card_identifiers[2]);
-		const int queen_suit = Card::Get_Suit_From_Id(meld_card_identifiers[2]);
+		const int queen_face = Card::Get_Face_From_Id(a_meld_card_identifiers[2]);
+		const int queen_suit = Card::Get_Suit_From_Id(a_meld_card_identifiers[2]);
 
-		const int king_face = Card::Get_Face_From_Id(meld_card_identifiers[3]);
-		const int king_suit = Card::Get_Suit_From_Id(meld_card_identifiers[3]);
+		const int king_face = Card::Get_Face_From_Id(a_meld_card_identifiers[3]);
+		const int king_suit = Card::Get_Suit_From_Id(a_meld_card_identifiers[3]);
 
-		const int ace_face = Card::Get_Face_From_Id(meld_card_identifiers[4]);
-		const int ace_suit = Card::Get_Suit_From_Id(meld_card_identifiers[4]);
+		const int ace_face = Card::Get_Face_From_Id(a_meld_card_identifiers[4]);
+		const int ace_suit = Card::Get_Suit_From_Id(a_meld_card_identifiers[4]);
 
 		if((ten_suit == m_trump_suit_of_current_game && 
 			jack_suit == m_trump_suit_of_current_game &&
@@ -84,12 +90,12 @@ int Player::Get_Meld_Type_12_From_Cards(std::vector<Card*>& a_meld_card_list) {
 		) {
 			return 0;
 		}
-	} else if (meld_card_identifiers.size() == 2) {
-		const int first_face = Card::Get_Face_From_Id(meld_card_identifiers[0]);
-		const int first_suit = Card::Get_Suit_From_Id(meld_card_identifiers[0]);
+	} else if (a_meld_card_identifiers.size() == 2) {
+		const int first_face = Card::Get_Face_From_Id(a_meld_card_identifiers[0]);
+		const int first_suit = Card::Get_Suit_From_Id(a_meld_card_identifiers[0]);
 
-		const int second_face = Card::Get_Face_From_Id(meld_card_identifiers[1]);
-		const int second_suit = Card::Get_Suit_From_Id(meld_card_identifiers[1]);
+		const int second_face = Card::Get_Face_From_Id(a_meld_card_identifiers[1]);
+		const int second_suit = Card::Get_Suit_From_Id(a_meld_card_identifiers[1]);
 
 		if (first_face == 3 && second_face == 4) {
 			// check for royal marriage
@@ -108,25 +114,25 @@ int Player::Get_Meld_Type_12_From_Cards(std::vector<Card*>& a_meld_card_list) {
 			second_suit == 3) {
 				return 11;
 		}
-	}else if(meld_card_identifiers.size() == 1) {
+	}else if(a_meld_card_identifiers.size() == 1) {
 		//dix
-		const int nine_face = Card::Get_Face_From_Id(meld_card_identifiers[0]);
-		const int nine_suit = Card::Get_Suit_From_Id(meld_card_identifiers[0]);
+		const int nine_face = Card::Get_Face_From_Id(a_meld_card_identifiers[0]);
+		const int nine_suit = Card::Get_Suit_From_Id(a_meld_card_identifiers[0]);
 		if(nine_face == 0 && nine_suit == m_trump_suit_of_current_game) {
 			return 6;
 		}
-	} else if (meld_card_identifiers.size() == 4) {
-		const int first_face = Card::Get_Face_From_Id(meld_card_identifiers[0]);
-		const int first_suit = Card::Get_Suit_From_Id(meld_card_identifiers[0]);
+	} else if (a_meld_card_identifiers.size() == 4) {
+		const int first_face = Card::Get_Face_From_Id(a_meld_card_identifiers[0]);
+		const int first_suit = Card::Get_Suit_From_Id(a_meld_card_identifiers[0]);
 
-		const int second_face = Card::Get_Face_From_Id(meld_card_identifiers[1]);
-		const int second_suit = Card::Get_Suit_From_Id(meld_card_identifiers[1]);
+		const int second_face = Card::Get_Face_From_Id(a_meld_card_identifiers[1]);
+		const int second_suit = Card::Get_Suit_From_Id(a_meld_card_identifiers[1]);
 
-		const int third_face = Card::Get_Face_From_Id(meld_card_identifiers[2]);
-		const int third_suit = Card::Get_Suit_From_Id(meld_card_identifiers[2]);
+		const int third_face = Card::Get_Face_From_Id(a_meld_card_identifiers[2]);
+		const int third_suit = Card::Get_Suit_From_Id(a_meld_card_identifiers[2]);
 
-		const int fourth_face = Card::Get_Face_From_Id(meld_card_identifiers[3]);
-		const int fourth_suit = Card::Get_Suit_From_Id(meld_card_identifiers[3]);
+		const int fourth_face = Card::Get_Face_From_Id(a_meld_card_identifiers[3]);
+		const int fourth_suit = Card::Get_Suit_From_Id(a_meld_card_identifiers[3]);
 
 		if (first_suit == 0 && second_suit == 1 && third_suit == 2 &&
 			fourth_suit == 3) {
@@ -333,45 +339,12 @@ void Player::Load_Meld_Cards_From_String(std::string &a_meld_string, std::vector
 	while (std::getline(s, card_str, ' ')) {
 		no_of_cards_in_meld += 1;
 		int id = Card::Get_Card_Id_From_String(card_str);
-		std::vector<int> cur_meld_possibilities;
-		if(prev_meld_possibilities.empty()) {
-			for(int i = 0; i < logic_vector.size(); i++) {
-				if(logic_vector[i][id] == 0) {
-					cur_meld_possibilities.push_back(i);
-				}
-			}
-			meld_card_strings.push_back(std::vector<std::string>());
-		} else {
-			for(int& meld_number_12: prev_meld_possibilities) {
-				if(logic_vector[meld_number_12][id] == 0) {
-					cur_meld_possibilities.push_back(meld_number_12);
-				}
-			}
+		if(meld_card_strings.empty()) {
+			meld_card_strings.push_back({});
 		}
-		meld_card_strings.back().push_back(card_str);
-		if(cur_meld_possibilities.size() == 1) {
-			if(no_of_cards_in_meld == total_cards_in_melds[cur_meld_possibilities[0]]) {
-				meld_numbers_12_vec.push_back(cur_meld_possibilities[0]);
-				no_of_cards_in_meld = 0;
-				cur_meld_possibilities.clear();
-			}
-		} else if(cur_meld_possibilities.empty()) { // royal flush and royal marriage overlapping
-			for(int possible_meld: prev_meld_possibilities) {
-				if(no_of_cards_in_meld - 1 == total_cards_in_melds[possible_meld]) {
-					meld_card_strings.back().pop_back();
-					meld_card_strings.push_back(std::vector<std::string>());
-					meld_card_strings.back().push_back(card_str);
-					meld_numbers_12_vec.push_back(possible_meld);
-					no_of_cards_in_meld = 1;
-					for(int i = 0; i < logic_vector.size(); i++) {
-						if(logic_vector[i][id] == 0) {
-							cur_meld_possibilities.push_back(i);
-						}
-					}
-				}
-			}
+		if(card_str.back() == ',') {
+
 		}
-		prev_meld_possibilities = cur_meld_possibilities;
 	}
 
 	// Now I have the data structure of meld_card_strings 
