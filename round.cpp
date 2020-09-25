@@ -10,13 +10,10 @@ void Round::Play_A_Round() {
 		player_ptr->Set_Trump_card(m_trump_card->Get_Card_Id());
 	}
 
-	Load_From_File("serialize");
-
 	while(m_deck.Get_Stock_Size() > 1) {
 		Play_Turn_And_Pick_Up_From_Stock();
 		std::cout << std::endl << "--------------------------------------------------------New Battle--------------------------------------------------------------------------------------------------" << std::endl;
 	}
-	// Save_To_File("serialize1");
 
 	if(m_deck.Get_Stock_Size() == 1) {
 		Play_Turn_And_Dont_Pick_Up_From_Stock();
@@ -39,7 +36,10 @@ void Round::Play_A_Round() {
 
 void Round::Play_Cards_Against_Each_Other() {
 	const int chase_player = m_cur_lead_player ^ 1; // The other of the lead players
+	Ask_Input_From_Menu(m_cur_lead_player);
 	Card* lead_card = m_players[m_cur_lead_player]->Get_Card_To_Play(NULL);
+
+	Ask_Input_From_Menu(chase_player);
 	Card* chase_card = m_players[chase_player]->Get_Card_To_Play(lead_card);
 
 	int who_won = -1;
@@ -112,6 +112,16 @@ void Round::Decide_First_Player_Through_Coin_Toss() {
 	if(was_user_correct) {
 		m_cur_lead_player = 0;
 	} else {
+		m_cur_lead_player = 1;
+	}
+}
+
+void Round::Decide_Next_Round_Starting_Player() {
+	if(m_scores[0] > m_scores[1]) {
+		m_cur_lead_player = 0;
+	} else if (m_scores[0] == m_scores[1]) {
+		Decide_First_Player_Through_Coin_Toss();
+	} else{
 		m_cur_lead_player = 1;
 	}
 }
@@ -383,4 +393,8 @@ void Round::Ask_Input_From_Menu(int a_cur_player) {
 	} else if (user_input == 4) {
 		exit(EXIT_SUCCESS);
 	}
+}
+
+void Round::Increase_Round_Number() {
+	m_cur_round_number+=1;
 }

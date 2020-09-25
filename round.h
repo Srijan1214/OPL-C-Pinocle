@@ -23,11 +23,13 @@ class Round {
 	void Play_A_Round();
 	void Deal_Cards_From_Deck_To_Players();
 	void Decide_First_Player_Through_Coin_Toss();
+	void Decide_Next_Round_Starting_Player();
 	const std::vector<int> &Get_Scores() const;
 
 	void Reset_Round();
 
 	void Set_Cur_Round_Number(int a_cur_round);
+	void Increase_Round_Number();
 	void Set_Previous_Scores(std::vector<int> a_prev_scores);
 	void Save_To_File(std::string a_path);
 	void Load_From_File(std::string a_path);

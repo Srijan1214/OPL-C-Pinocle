@@ -2,8 +2,6 @@
 
 Human::Human() {}
 
-const char Human::Get_Heads_Or_Tails() const { return 'H'; }
-
 void Human::Print_Hand_and_Meld_With_Id() {
 	std::string index_string = "";
 	std::string cards_string = "";
