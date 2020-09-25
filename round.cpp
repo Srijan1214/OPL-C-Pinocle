@@ -4,12 +4,6 @@ Round::Round() : m_players({&m_player1,&m_player2}), m_scores(2,0){
 }
 
 void Round::Play_A_Round() {
-	Deal_Cards_From_Deck_To_Players();
-	if(m_cur_round_number == 1) {
-		Set_Cur_Turn_Through_Coin_Toss(m_player1);
-	}
-
-	Pick_Up_Trump_Card();
 	// Tell the players which suit is trump suit
 	for(Player* player_ptr:m_players) {
 		player_ptr->Set_Trump_Suit(m_trump_card->Get_Suit());
@@ -41,8 +35,6 @@ void Round::Play_A_Round() {
 		m_players[m_cur_lead_player]->Set_Round_Score(m_scores[m_cur_lead_player]);
 	}
 
-	// Reset Everything to make the next round ready
-	Reset_Round();
 }
 
 void Round::Play_Cards_Against_Each_Other() {
@@ -98,12 +90,22 @@ void Round::Deal_Cards_From_Deck_To_Players() {
 			m_players[0]->Give_Card_To_Player(card_to_give);
 		}
 	}
+	Pick_Up_Trump_Card();
 }
 
-void Round::Set_Cur_Turn_Through_Coin_Toss(const Human& a_human_player) {
+void Round::Decide_First_Player_Through_Coin_Toss() {
 	const int coin_toss_value = rand() % 1; // Tails is 1 and Heads is 0.
 
-	char human_choice = a_human_player.Get_Heads_Or_Tails();
+	std::string user_input;
+
+	do {
+		std::cout << "Coin was flipped. Give heads or tails (H/T) ?";
+		std::cin.clear();
+		std::getline(std::cin, user_input);
+	} while (!(user_input.size() == 1 && (tolower(user_input[0] == 'h') ||
+											tolower(user_input[1] == 't'))));
+
+	char human_choice = toupper(user_input[0]);
 
 	bool was_user_correct = (human_choice == 'T' && coin_toss_value == 1 ) || (human_choice == 'H' && coin_toss_value == 0 );
 
@@ -259,8 +261,7 @@ void Round::Load_From_File(std::string a_path) {
 			line_number++;
 		}
 	} else {
-		std::cout << "Error Opening file" << std::endl;
-		throw 123;
+		throw std::iostream::failure("Error Opening File");
 	}
 
 	// Destroy all previous cards so that new cards can be created from file.
@@ -342,37 +343,43 @@ void Round::Ask_Input_From_Menu(int a_cur_player) {
 
 		return ret_val;
 	};
-	std::cout << "1. Save the game" << std::endl;
-	std::cout << "2. Make a move" << std::endl;
 	if(a_cur_player == 0) {
+		std::cout << "1. Save the game" << std::endl;
+		std::cout << "2. Make a move" << std::endl;
 		std::cout << "3. Ask for help" << std::endl;
 		std::cout << "4 .Quit the game" << std::endl;
 	}else {
-		std::cout << "3 .Quit the game" << std::endl;
+		std::cout << "1. Make a move" << std::endl;
+		std::cout << "2 .Quit the game" << std::endl;
 	}
 	std::cout << std::endl;
 
 	std::cout << "Enter the option number from 1 - 4: ";
-	const int max_option_number = (a_cur_player == 0) ? 4 : 3;
+	const int max_option_number = (a_cur_player == 0) ? 4 : 2;
 
 	int user_input;
 	do{
 		user_input = get_int_input_from_user();
 	} while (!(user_input >= 1 && user_input <= max_option_number));
 
+	if (a_cur_player != 0) {
+		if(user_input == 1) {
+			user_input = 2;
+		}else if (user_input == 2) {
+			user_input = 4;
+		}
+	}
 
 	m_players[a_cur_player]->Turn_Off_Help_Mode();
 	if (user_input == 1) {
-		// Save Game
+		// Save Game and quit
+		Save_To_File("serialize");
+		exit(EXIT_SUCCESS);
 	} else if (user_input == 2) {
 		return;
 	} else if (user_input == 3) {
-		if(a_cur_player == 0) {
-			m_players[a_cur_player]->Turn_On_Help_Mode();
-			return;
-		} else {
-			exit(EXIT_SUCCESS);
-		}
+		m_players[a_cur_player]->Turn_On_Help_Mode();
+		return;
 	} else if (user_input == 4) {
 		exit(EXIT_SUCCESS);
 	}

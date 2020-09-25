@@ -22,7 +22,7 @@ class Round {
 	Round();
 	void Play_A_Round();
 	void Deal_Cards_From_Deck_To_Players();
-	void Set_Cur_Turn_Through_Coin_Toss(const Human& a_human_player);
+	void Decide_First_Player_Through_Coin_Toss();
 	const std::vector<int> &Get_Scores() const;
 
 	void Reset_Round();

@@ -8,5 +8,5 @@ class Game{
 		int m_player1_cumulative_score;
 		int m_player2_cumulative_score;
 		Game();
-		void load_game_from_file();
+		void Start_The_Game();
 };
