@@ -32,6 +32,14 @@ void Round::Play_A_Round() {
 		m_players[m_cur_lead_player]->Set_Round_Score(m_scores[m_cur_lead_player]);
 	}
 
+	if(m_scores[0] > m_scores[1]) {
+		std::cout << "Human Wins the Round" << std::endl;
+	} else if (m_scores[0] == m_scores[1]) {
+		std::cout << "Round is a Draw" << std::endl;
+	} else {
+		std::cout << "Computer Wins the Round." << std::endl;
+	}
+
 }
 
 void Round::Play_Cards_Against_Each_Other() {
@@ -102,8 +110,7 @@ void Round::Decide_First_Player_Through_Coin_Toss() {
 		std::cout << "Coin was flipped. Give heads or tails (H/T) ?";
 		std::cin.clear();
 		std::getline(std::cin, user_input);
-	} while (!(user_input.size() == 1 && (tolower(user_input[0] == 'h') ||
-											tolower(user_input[1] == 't'))));
+	} while (!(user_input.size() == 1 && (tolower(user_input[0]) == 'h' || tolower(user_input[0]) == 't')));
 
 	char human_choice = toupper(user_input[0]);
 
@@ -145,7 +152,7 @@ void Round::Print_Player2_Hand() {
 }
 
 void Round::Print_Interface_Message() {
-	std::cout << "Round: " << 1 << std::endl;
+	std::cout << "Round: " << m_cur_round_number << std::endl;
 	std::cout << std::endl;
 	Print_Player1_Hand();
 	Print_Player2_Hand();
@@ -206,16 +213,16 @@ void Round::Load_From_File(std::string a_path) {
 	int trump_card_id;
 	int next_player;
 
-	auto get_score_pairs_from_string = [](std::string& line) {
+	auto get_score_pairs_from_string = [](std::string& a_line) {
 		std::pair<int,int> ret_val;
-		int start = line.find(':') + 1;
-		start = line.find_first_not_of(' ', start);
-		int end = line.find_first_of(' ', start);
-		std::string num_str = line.substr(start, end - start);
+		int start = a_line.find(':') + 1;
+		start = a_line.find_first_not_of(' ', start);
+		int end = a_line.find_first_of(' ', start);
+		std::string num_str = a_line.substr(start, end - start);
 		ret_val.first = std::stoi(num_str);
-		start = line.find_first_not_of(' ', end);
-		start = line.find_first_not_of(' ', start + 1);
-		num_str = line.substr(start, line.size() - start);
+		start = a_line.find_first_not_of(' ', end);
+		start = a_line.find_first_not_of(' ', start + 1);
+		num_str = a_line.substr(start, a_line.size() - start);
 		ret_val.second = std::stoi(num_str);
 		return ret_val;
 	};
@@ -284,7 +291,6 @@ void Round::Load_From_File(std::string a_path) {
 	m_players[1]->Set_Trump_card(trump_card_id);
 	m_players[0]->Set_Trump_Suit(Card::Get_Suit_From_Id(trump_card_id));
 	m_players[1]->Set_Trump_Suit(Card::Get_Suit_From_Id(trump_card_id));
-
 	
 
 	m_deck.Load_Stock_Pile_From_String(stock_load_string, cards_that_have_been_used);
@@ -353,29 +359,41 @@ void Round::Ask_Input_From_Menu(int a_cur_player) {
 
 		return ret_val;
 	};
+
+	std::vector<std::string> options;
+	if(a_cur_player == m_cur_lead_player) {
+		options.push_back("Save the game");
+	}
 	if(a_cur_player == 0) {
-		std::cout << "1. Save the game" << std::endl;
-		std::cout << "2. Make a move" << std::endl;
-		std::cout << "3. Ask for help" << std::endl;
-		std::cout << "4 .Quit the game" << std::endl;
+		std::cout << "Human Turn" << std::endl;
+		options.push_back("Make a move");
+		options.push_back("Ask for help");
+		options.push_back("Quit the game");
 	}else {
-		std::cout << "1. Make a move" << std::endl;
-		std::cout << "2 .Quit the game" << std::endl;
+		std::cout << "Computer Turn" << std::endl;
+		options.push_back("Make a move");
+		options.push_back("Quit the game");
+	}
+	for(int i = 0; i < options.size(); i++) {
+		std::cout << i + 1 << ". " << options[i] << std::endl;
 	}
 	std::cout << std::endl;
 
-	std::cout << "Enter the option number from 1 - 4: ";
-	const int max_option_number = (a_cur_player == 0) ? 4 : 2;
+	const int max_option_number = options.size();
+	std::cout << "Enter the option number from 1 - " << max_option_number << ": ";
 
 	int user_input;
 	do{
 		user_input = get_int_input_from_user();
 	} while (!(user_input >= 1 && user_input <= max_option_number));
 
+	std::cout << std::endl;
+
+	if(a_cur_player != m_cur_lead_player) {
+		user_input++;
+	}
 	if (a_cur_player != 0) {
-		if(user_input == 1) {
-			user_input = 2;
-		}else if (user_input == 2) {
+		if (user_input == 3) {
 			user_input = 4;
 		}
 	}

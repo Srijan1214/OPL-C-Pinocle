@@ -13,10 +13,10 @@ const std::string Player::m_meld_names[9] = {"Flush",
 
 Player::Player()
 	: m_current_meld_cards(12),
+	  m_help_mode(false),
 	  m_no_of_times_meld_has_been_played(9, 0),
 	  m_which_card_used_for_meld(9, std::vector<bool>(48, false)),
-	  m_trump_suit_of_current_game(-1),
-	  m_help_mode(false) {}
+	  m_trump_suit_of_current_game(-1) {}
 
 void Player::Give_Card_To_Player(Card* a_card_ptr) {
 	m_hand_card_pile.push_back(a_card_ptr);
@@ -829,14 +829,15 @@ void Player::Remove_Card_From_Pile(int a_index) {
 				}
 			}
 		}
-		// m_current_meld_cards[removal_index_to_meld_pointer_triplet[0]][removal_index_to_meld_pointer_triplet[1]] = m_current_meld_cards[removal_index_to_meld_pointer_triplet[0]].back();
 		cards_to_remove_from_meld = m_current_meld_cards[removal_index_to_meld_pointer_triplet[0]].back();
 		m_current_meld_cards[removal_index_to_meld_pointer_triplet[0]].pop_back();
 	}	
 
 	// Change the meld lists pointing to hand at the back to change location of last card to the one that is about to be removed. 
-	for(auto& ele: m_hand_meld_involvement_list.back()) {
-		m_current_meld_cards[ele[0]][ele[1]][ele[2]] = a_index;
+	if(a_index != m_hand_meld_involvement_list.size() - 1) {
+		for(auto& ele: m_hand_meld_involvement_list.back()) {
+			m_current_meld_cards[ele[0]][ele[1]][ele[2]] = a_index;
+		}
 	}
 	// Remove Card Completely from the Hand
 	m_hand_card_pile[a_index] = m_hand_card_pile.back();

@@ -16,14 +16,14 @@ void Game::Start_The_Game() {
 			std::cout << a_prompt_message;
 			std::cin.clear();
 			std::getline(std::cin, user_input);
-		} while (!(user_input.size() == 1 && (tolower(user_input[0] == 'y') ||
-											  tolower(user_input[1] == 'n'))));
+		} while (!(user_input.size() == 1 && (tolower(user_input[0]) == 'y' || tolower(user_input[0])  == 'n')));
 	};
 
-	get_yes_no_user_input("Do you want to load game from file? ");
+	get_yes_no_user_input("Do you want to load game from file (y/n)? ");
 
-	if(user_input[0] == 'y') {
+	if(tolower(user_input[0]) == 'y') {
 		while(true) {
+			std::cout << "Enter File Name: ";
 			std::cin.clear();
 			std::getline(std::cin, user_input);
 			try {
@@ -52,6 +52,12 @@ void Game::Start_The_Game() {
 		m_game_round.Deal_Cards_From_Deck_To_Players();
 		get_yes_no_user_input("You want to play another Round (y/n) ? ");
 	} while (!(user_input.size() == 1 && tolower(user_input[1] == 'n')));
-	
 
+	if (m_player1_cumulative_score > m_player2_cumulative_score) {
+		std::cout << "Human Wins" << std::endl;
+	} else if (m_player1_cumulative_score == m_player2_cumulative_score) {
+		std::cout << "Draw" << std::endl;
+	} else {
+		std::cout << "Computer Wins" << std::endl;
+	}
 }
