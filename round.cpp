@@ -107,7 +107,7 @@ void Round::Decide_First_Player_Through_Coin_Toss() {
 	std::string user_input;
 
 	do {
-		std::cout << "Coin was flipped. Give heads or tails (H/T) ?";
+		std::cout << "Coin was flipped. Give heads or tails (H/T)? ";
 		std::cin.clear();
 		std::getline(std::cin, user_input);
 	} while (!(user_input.size() == 1 && (tolower(user_input[0]) == 'h' || tolower(user_input[0]) == 't')));
@@ -117,10 +117,13 @@ void Round::Decide_First_Player_Through_Coin_Toss() {
 	bool was_user_correct = (human_choice == 'T' && coin_toss_value == 1 ) || (human_choice == 'H' && coin_toss_value == 0 );
 
 	if(was_user_correct) {
+		std::cout << "Human wins coin toss." << std::endl;
 		m_cur_lead_player = 0;
 	} else {
+		std::cout << "Human loses coin toss." << std::endl;
 		m_cur_lead_player = 1;
 	}
+	std::cout << std::endl;
 }
 
 void Round::Decide_Next_Round_Starting_Player() {
