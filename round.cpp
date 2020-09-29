@@ -104,7 +104,6 @@ void Round::Deal_Cards_From_Deck_To_Players() {
 
 void Round::Decide_First_Player_Through_Coin_Toss() {
 	const int coin_toss_value = rand() % 2; // Tails is 1 and Heads is 0.
-	std::cout << coin_toss_value << std::endl;
 
 	std::string user_input;
 
@@ -183,6 +182,11 @@ void Round::Set_Previous_Scores(std::vector<int> a_prev_scores) {
 void Round::Save_To_File(std::string a_path) {
 	std::ofstream file;
 	file.open(a_path);
+
+	if(file.fail()) {
+		std::cerr << "Error!!! Could not create file." << std::endl;
+		return;
+	}
 
 	file << "Round: " << m_cur_round_number << "\n\n";
 
@@ -384,6 +388,16 @@ void Round::Ask_Input_From_Menu(int a_cur_player) {
 		return ret_val;
 	};
 
+	auto get_trimmed_string_input_from_user = []() {
+		std::string user_input;
+		std::cin.clear();
+		std::getline(std::cin, user_input);
+
+		int start = user_input.find_first_not_of(' ');
+		int end = user_input.find_last_not_of(' ');
+		return user_input.substr(start, end - start + 1);
+	};
+
 	std::vector<std::string> options;
 	if(a_cur_player == m_cur_lead_player) {
 		options.push_back("Save the game");
@@ -425,7 +439,8 @@ void Round::Ask_Input_From_Menu(int a_cur_player) {
 	m_players[a_cur_player]->Turn_Off_Help_Mode();
 	if (user_input == 1) {
 		// Save Game and quit
-		Save_To_File("serialize");
+		std::cout << "Enter the name of save file: ";
+		Save_To_File(get_trimmed_string_input_from_user());
 		exit(EXIT_SUCCESS);
 	} else if (user_input == 2) {
 		return;
