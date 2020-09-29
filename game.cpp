@@ -50,11 +50,12 @@ void Game::Start_The_Game() {
 
 		m_game_round.Increase_Round_Number();
 		m_game_round.Deal_Cards_From_Deck_To_Players();
+		std::cout << "Human Cumulative Score: " << m_player1_cumulative_score << std::endl;
+		std::cout << "Computer Cumulative Score: " << m_player2_cumulative_score << std::endl;
+		std::cout << std::endl;
 		get_yes_no_user_input("You want to play another Round (y/n) ? ");
-	} while (!(user_input.size() == 1 && tolower(user_input[1] == 'n')));
+	} while (!(user_input.size() == 1 && tolower(user_input[0]) == 'n'));
 
-	std::cout << "Human Cumulative Score: " << m_player1_cumulative_score << std::endl;
-	std::cout << "Computer Cumulative Score: " << m_player2_cumulative_score << std::endl;
 	if (m_player1_cumulative_score > m_player2_cumulative_score) {
 		std::cout << "Human Wins" << std::endl;
 	} else if (m_player1_cumulative_score == m_player2_cumulative_score) {

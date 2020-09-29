@@ -245,11 +245,20 @@ std::string Player::Get_Melds_String() {
 				if(i == m_current_meld_cards.size() - 1 && hand_index == current_melds.back()) {
 					continue;	// do not add the last space if is the last character.
 				}
-				message += " ";
+				if(!(&hand_index == &(current_melds.back()))) {
+					message += " ";
+				}
 			}
+			message += ", ";
 		}
 	}
-	return message;
+	if(!message.empty() && message.back() == ' '){
+		message.pop_back();
+	}
+	if(!message.empty() && message.back() == ',') {
+		message.pop_back();
+	}
+		return message;
 }
 
 void Player::Load_Members_From_Serialization_String(std::string a_serialization_string, std::vector<bool> &a_cards_that_have_been_used) {

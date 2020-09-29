@@ -361,6 +361,9 @@ void Round::Reset_Round() {
 	for(Player* player_ptr: m_players) {
 		player_ptr->Reset_Meld_History();
 	}
+
+	m_scores[0] = 0;
+	m_scores[1] = 0;
 }
 
 void Round::Ask_Input_From_Menu(int a_cur_player) {

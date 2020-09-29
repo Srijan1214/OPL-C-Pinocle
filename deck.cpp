@@ -67,6 +67,8 @@ void Deck::Load_Stock_Pile_From_String(std::string &a_stock_string, std::vector<
 		a_cards_that_have_been_used[id] = true;
 		m_card_list.push_back(new Card(id));
 	}
+
+	std::reverse(m_card_list.begin(), m_card_list.end());
 }
 
 int Deck::Get_Stock_Size() {
