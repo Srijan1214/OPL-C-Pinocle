@@ -1,6 +1,6 @@
 #include "round.h"
 
-Round::Round() : m_players({&m_player1,&m_player2}), m_scores(2,0){
+Round::Round() : m_players({&m_player1,&m_player2}), m_scores(2,0), m_has_trump_card_been_used(false){
 }
 
 void Round::Play_A_Round() {
@@ -25,6 +25,7 @@ void Round::Play_A_Round() {
 		std::cout << "------------------------------------------------------------------------STOCK PILE EMPTIED----------------------------------------------------------------------------------" << std::endl;
 		std::cout << "----------------------------------------------------------------------------------------------------------------------------------------------------------" << std::endl;
 	}
+	m_has_trump_card_been_used = true;
 
 	//From now on cards aren't picked up from the stock pile.
 	while(m_players[m_cur_lead_player]->Get_No_Of_Remaining_Cards() > 0) {
@@ -145,12 +146,12 @@ const std::vector<int> & Round::Get_Scores() const {
 }
 
 void Round::Print_Player1_Hand() {
-	std::cout << "Human:" << " Score: " << m_scores[0] << std::endl;
+	std::cout << "Human:" << std::endl << "Score: " << m_scores[0] << std::endl;
 	std::cout << m_player1.Get_Console_Message() << std::endl;
 }
 
 void Round::Print_Player2_Hand() {
-	std::cout << "Computer:" << " Score: " << m_scores[1] << std::endl;
+	std::cout << "Computer:" << std::endl << "Score: " << m_scores[1] << std::endl;
 	std::cout << m_player2.Get_Console_Message() << std::endl;
 }
 
@@ -159,7 +160,11 @@ void Round::Print_Interface_Message() {
 	std::cout << std::endl;
 	Print_Player1_Hand();
 	Print_Player2_Hand();
-	std::cout << "Trump Card: " << m_trump_card->Get_Card_String_Value()  << std::endl;
+	if (m_has_trump_card_been_used == false) {
+		std::cout << "Trump Card: " << m_trump_card->Get_Card_String_Value()  << std::endl;
+	} else {
+		std::cout << "Trump Card: " << m_trump_card->Get_Card_String_Value().substr(1,1)  << std::endl;
+	}
 	std::cout << "Stocks: " << m_deck.Get_Stock_String() <<std::endl;
 	// std::cout << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl;
 	std::cout << std::endl << "--------------------------------------------------------------------------------------";
@@ -192,7 +197,12 @@ void Round::Save_To_File(std::string a_path) {
 	file << "   Capture Pile : " <<m_players[0]->Get_Capture_Pile_String() << "\n";
 	file << "   Melds : " <<m_players[0]->Get_Melds_String() << "\n\n";
 
-	file << "Trump Card: " <<m_trump_card->Get_Card_String_Value() << "\n";
+	if (m_has_trump_card_been_used == false) {
+		file << "Trump Card: " <<m_trump_card->Get_Card_String_Value() << "\n";
+	} else {
+		// Just put the Suit instead of the trump card
+		file << "Trump Card: " <<m_trump_card->Get_Card_String_Value().substr(1,1) << "\n";
+	}
 	file << "Stocks: " << m_deck.Get_Stock_String() << "\n\n";
 
 	file << "Next Player: ";
@@ -252,13 +262,22 @@ void Round::Load_From_File(std::string a_path) {
 				int start = line.find(':') + 1;
 				start = line.find_first_not_of(' ', start);
 				std::string card_str = line.substr(start, line.size() - start);
+				if(card_str.size() == 1) {
+					m_has_trump_card_been_used = true;
+					card_str = "A" + card_str;
+				} else {
+					m_has_trump_card_been_used = false;
+				}
 				trump_card_id = Card::Get_Card_Id_From_String(card_str);
 			}
 			if(line_number == 16) {
 				int start = line.find(':') + 1;
 				start = line.find_first_not_of(' ', start);
 				int end = line.find_last_not_of(' ');
-				stock_load_string = line.substr(start, end - start + 1);
+				if(start != -1) {
+					// if stock pile not empty
+					stock_load_string = line.substr(start, end - start + 1);
+				}
 			}
 			if(line_number == 18) {
 				int start = line.find(':') + 1;
@@ -294,7 +313,6 @@ void Round::Load_From_File(std::string a_path) {
 	m_players[1]->Set_Trump_card(trump_card_id);
 	m_players[0]->Set_Trump_Suit(Card::Get_Suit_From_Id(trump_card_id));
 	m_players[1]->Set_Trump_Suit(Card::Get_Suit_From_Id(trump_card_id));
-	
 
 	m_deck.Load_Stock_Pile_From_String(stock_load_string, cards_that_have_been_used);
 	m_players[0]->Load_Members_From_Serialization_String(human_load_string, cards_that_have_been_used);
@@ -314,7 +332,6 @@ void Round::Play_Turn_And_Dont_Pick_Up_From_Stock() {
 	// The following function will update lead and chase player based on the outcome of the battle.
 	Play_Cards_Against_Each_Other();
 	//lead player declares meld
-	// Print_Interface_Message();
 	int meld_index = m_players[m_cur_lead_player]->Get_Meld_To_Play();
 	if (meld_index >= 0 && meld_index < 9) {
 		m_scores[m_cur_lead_player] += Player::m_meld_scores[meld_index];
@@ -383,10 +400,10 @@ void Round::Ask_Input_From_Menu(int a_cur_player) {
 	std::cout << std::endl;
 
 	const int max_option_number = options.size();
-	std::cout << "Enter the option number from 1 - " << max_option_number << ": ";
 
 	int user_input;
 	do{
+		std::cout << "Enter the option number from 1 - " << max_option_number << ": ";
 		user_input = get_int_input_from_user();
 	} while (!(user_input >= 1 && user_input <= max_option_number));
 

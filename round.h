@@ -49,4 +49,6 @@ class Round {
 	void Print_Interface_Message();
 
 	void Ask_Input_From_Menu(int a_cur_player);
+
+	bool m_has_trump_card_been_used;
 };

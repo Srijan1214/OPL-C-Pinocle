@@ -49,7 +49,8 @@ void Deck::Put_Card_Back_In_Deck(Card* a_card_ptr) {
 
 std::string Deck::Get_Stock_String() {
 	std::string ret_string = "";
-	for(Card* card_ptr: m_card_list) {
+	for (int i = m_card_list.size() - 1; i >= 0; i-- ) {
+		Card* card_ptr = m_card_list[i];
 		ret_string+= (card_ptr->Get_Card_String_Value() + " ");
 	}
 	return ret_string;
