@@ -23,7 +23,8 @@ class Round {
 	void Play_A_Round();
 	void Deal_Cards_From_Deck_To_Players();
 	void Decide_First_Player_Through_Coin_Toss();
-	void Decide_Next_Round_Starting_Player();
+	void Set_Player_1_Lead_Player();
+	void Set_Player_2_Lead_Player();
 	const std::vector<int> &Get_Scores() const;
 
 	void Reset_Round();

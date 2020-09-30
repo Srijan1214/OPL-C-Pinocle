@@ -50,6 +50,13 @@ void Game::Start_The_Game() {
 
 		m_game_round.Increase_Round_Number();
 		m_game_round.Deal_Cards_From_Deck_To_Players();
+		if(m_player1_cumulative_score > m_player2_cumulative_score) {
+			m_game_round.Set_Player_1_Lead_Player();
+		} else if (m_player1_cumulative_score == m_player2_cumulative_score) {
+			m_game_round.Decide_First_Player_Through_Coin_Toss();
+		} else {
+			m_game_round.Set_Player_2_Lead_Player();
+		}
 		std::cout << "Human Cumulative Score: " << m_player1_cumulative_score << std::endl;
 		std::cout << "Computer Cumulative Score: " << m_player2_cumulative_score << std::endl;
 		std::cout << std::endl;

@@ -721,7 +721,9 @@ std::pair<std::vector<int>, int> Player::Get_Indexes_And_Meld_Number12_Best_Meld
 			int& ele = meld_logic_vector[meld_number_played][j];
 			if (ele > 0) {
 				return_vector.push_back(j);
-				j++;
+				if(j % 2 == 0) {
+					j++;
+				}
 			}
 		}
 		return {return_vector, (meld_number_played)};

@@ -127,16 +127,6 @@ void Round::Decide_First_Player_Through_Coin_Toss() {
 	std::cout << std::endl;
 }
 
-void Round::Decide_Next_Round_Starting_Player() {
-	if(m_scores[0] > m_scores[1]) {
-		m_cur_lead_player = 0;
-	} else if (m_scores[0] == m_scores[1]) {
-		Decide_First_Player_Through_Coin_Toss();
-	} else{
-		m_cur_lead_player = 1;
-	}
-}
-
 void Round::Pick_Up_Trump_Card() {
 	m_trump_card = m_deck.Pop_Top_Card();
 }
@@ -454,4 +444,12 @@ void Round::Ask_Input_From_Menu(int a_cur_player) {
 
 void Round::Increase_Round_Number() {
 	m_cur_round_number+=1;
+}
+
+void Round::Set_Player_1_Lead_Player() {
+    m_cur_lead_player = 0;
+}
+
+void Round::Set_Player_2_Lead_Player() {
+    m_cur_lead_player = 1;
 }

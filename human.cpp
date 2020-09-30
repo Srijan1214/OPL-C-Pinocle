@@ -61,7 +61,7 @@ Card* Human::Get_Card_To_Play(Card* a_lead_card_played) {
 		Print_Hand_and_Meld_With_Id();
 		std::cout << "Enter index of Cards From Above: ";
 		index = Get_Integer_Input_From_User();
-	} while (!(index >= 0 && index <= total_cards) || std::cin.fail());
+	} while (!(index >= 0 && index < total_cards) || std::cin.fail());
 	std::cout << std::endl;
 
 	Card* ret_card = m_hand_card_pile[index];
