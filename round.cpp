@@ -135,17 +135,17 @@ const std::vector<int> & Round::Get_Scores() const {
 	return m_scores;
 }
 
-void Round::Print_Player1_Hand() {
+void Round::Print_Player1_Hand() const{
 	std::cout << "Human:" << std::endl << "Score: " << m_scores[0] << std::endl;
 	std::cout << m_player1.Get_Console_Message() << std::endl;
 }
 
-void Round::Print_Player2_Hand() {
+void Round::Print_Player2_Hand() const {
 	std::cout << "Computer:" << std::endl << "Score: " << m_scores[1] << std::endl;
 	std::cout << m_player2.Get_Console_Message() << std::endl;
 }
 
-void Round::Print_Interface_Message() {
+void Round::Print_Interface_Message() const {
 	std::cout << "Round: " << m_cur_round_number << std::endl;
 	std::cout << std::endl;
 	Print_Player1_Hand();
@@ -169,7 +169,7 @@ void Round::Set_Previous_Scores(std::vector<int> a_prev_scores) {
 	m_prev_scores = a_prev_scores;
 }
 
-void Round::Save_To_File(std::string a_path) {
+void Round::Save_To_File(std::string a_path) const {
 	std::ofstream file;
 	file.open(a_path);
 
@@ -361,7 +361,7 @@ void Round::Reset_Round() {
 	m_scores[1] = 0;
 }
 
-void Round::Ask_Input_From_Menu(int a_cur_player) {
+void Round::Ask_Input_From_Menu(int a_cur_player) const {
 	auto get_int_input_from_user = []() {
 		int ret_val = -1;
 		std::string user_input;

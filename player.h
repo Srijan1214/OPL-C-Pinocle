@@ -18,10 +18,10 @@ class Player {
 	void Set_Round_Score(int a_score);
 	void Set_Trump_card(int);
 	
-	std::string Get_Console_Message();
-	std::string Get_Hand_Pile_String();
-	std::string Get_Capture_Pile_String();
-	std::string Get_Melds_String();
+	std::string Get_Console_Message() const;
+	std::string Get_Hand_Pile_String() const;
+	std::string Get_Capture_Pile_String() const;
+	std::string Get_Melds_String() const;
 
 	static const int m_meld_scores[9];
 	static const std::string m_meld_names[9];
@@ -34,7 +34,7 @@ class Player {
 	void Load_Hand_Cards_From_String(std::string &a_meld_string, std::vector<bool> &a_cards_that_have_been_used);
 	void Load_Meld_Cards_From_String(std::string &a_meld_string, std::vector<bool> &a_cards_that_have_been_used);
 
-	int Get_No_Of_Remaining_Cards();
+	int Get_No_Of_Remaining_Cards() const;
 	std::vector<Card*> Pop_All_Cards_From_Capture_Pile();
 	void Reset_Meld_History();
 
@@ -56,8 +56,8 @@ class Player {
 	std::vector<int> m_no_of_times_meld_has_been_played;
 	std::vector<std::vector<bool>> m_which_card_used_for_meld;
 	
-	int Get_Meld_Type_12_From_Cards(std::vector<Card*> &);
-	int Get_Meld_Type_12_From_Cards(std::vector<int> &);
+	int Get_Meld_Type_12_From_Cards(std::vector<Card*> &) const;
+	int Get_Meld_Type_12_From_Cards(std::vector<int> &) const;
 	int m_trump_suit_of_current_game;
 	int m_trump_card_id;
 	int m_round_score;
@@ -66,32 +66,32 @@ class Player {
 	// AI logic.
 	// Best Card and the resulting meld if the card thrown.
 	// Used when player is the lead player.
-	std::pair<int,int> Find_IndexMeldPair_Of_Card_To_Throw();
+	std::pair<int,int> Find_IndexMeldPair_Of_Card_To_Throw() const;
 
 	// AI logic for melds.
 	// Gets the indexes of the cards resulting in the best meld
 	// and the meld number_9
-	std::pair<std::vector<int>,int> Get_Indexes_And_Meld_Number12_Best_Meld();
+	std::pair<std::vector<int>,int> Get_Indexes_And_Meld_Number12_Best_Meld() const;
 
 	// Meld History Functions
-	bool Is_Meld_Allowed_By_History(std::vector<Card*> & a_meld_card_list, int meld_number);
+	bool Is_Meld_Allowed_By_History(std::vector<Card*> & a_meld_card_list, int meld_number) const;
 	void Update_Meld_History(std::vector<Card*> &, int);
 
 	// Utilities
-	int Find_Index_of_Smallest_Card_Greater_Than_Card(Card* card_ptr);
-	int Find_Index_Of_Smallest_Card();
-	int Find_Index_Of_Greatest_Card();
-	int TO9(int a_12_based_index);
-	int Search_Card_In_Pile(int a_id);
-	bool Is_First_Card_Greater_Than_Lead(int a_card_1, int a_card_2);
-	int Get_Card_Weight(Card* card_ptr);
+	int Find_Index_of_Smallest_Card_Greater_Than_Card(Card* card_ptr) const;
+	int Find_Index_Of_Smallest_Card() const;
+	int Find_Index_Of_Greatest_Card() const;
+	int TO9(int a_12_based_index) const;
+	int Search_Card_In_Pile(int a_id) const;
+	bool Is_First_Card_Greater_Than_Lead(int a_card_1, int a_card_2) const;
+	int Get_Card_Weight(Card* card_ptr) const;
 
    private:
 	// The rest are function only used by the Find_IndexMeldPair_Of_Card_To_Throw function.
-	std::vector<std::vector<int>> Get_Meld_Logic_Vector();
-	void add_to_meld_logic_vector(std::vector<std::vector<int>>& a_meld_logic_vector, std::vector<Card*>& a_card_pile);
-	void update_logic_vector_with_history(std::vector<std::vector<int>>& a_meld_logic_vector);
-	int Get_Best_Meld_If_Card_Thrown(std::vector<std::vector<int>>& a_meld_logic_vector, Card* a_card_ptr);
-	std::pair<int,int> Get_Best_MeldCardIndexPair_From_Logic(std::vector<std::vector<int>>& a_meld_logic_vector);
+	std::vector<std::vector<int>> Get_Meld_Logic_Vector() const;
+	void add_to_meld_logic_vector(std::vector<std::vector<int>>& a_meld_logic_vector, const std::vector<Card*>& a_card_pile) const;
+	void Update_Logic_Vector_With_History(std::vector<std::vector<int>>& a_meld_logic_vector) const;
+	int Get_Best_Meld_If_Card_Thrown(std::vector<std::vector<int>>& a_meld_logic_vector, Card* a_card_ptr) const;
+	std::pair<int,int> Get_Best_MeldCardIndexPair_From_Logic(std::vector<std::vector<int>>& a_meld_logic_vector) const;
 
 };

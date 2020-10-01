@@ -2,7 +2,7 @@
 
 Human::Human() {}
 
-void Human::Print_Hand_and_Meld_With_Id() {
+void Human::Print_Hand_and_Meld_With_Id() const{
 	std::string index_string = "";
 	std::string cards_string = "";
 
@@ -26,7 +26,7 @@ void Human::Print_Hand_and_Meld_With_Id() {
 
 	for(int i = 0; i < m_current_meld_cards.size(); i++) {
 		for(auto& current_melds: m_current_meld_cards[i]) {
-			for(int& hand_index: current_melds) {
+			for(const int& hand_index: current_melds) {
 				// std::cout << m_hand_card_pile[hand_index]->Get_Card_String_Value();
 				index_string += (std::to_string(hand_index) + " "); 
 				cards_string += m_hand_card_pile[hand_index]->Get_Card_String_Value();
@@ -69,7 +69,7 @@ Card* Human::Get_Card_To_Play(Card* a_lead_card_played) {
 	return ret_card;
 }
 
-std::vector<int> Human::Parse_Indexes_Vector_From_String(std::string a_user_input) {
+std::vector<int> Human::Parse_Indexes_Vector_From_String(std::string a_user_input) const {
 	std::vector<int> ret_vec;
 
 	std::stringstream s(a_user_input);
@@ -177,7 +177,7 @@ int Human::Get_Meld_To_Play() {
 	return meld_number_9;
 }
 
-int Human::Get_Integer_Input_From_User() {
+int Human::Get_Integer_Input_From_User() const{
 	int ret_val = -1;
 	std::string user_input;
 
@@ -195,7 +195,7 @@ int Human::Get_Integer_Input_From_User() {
 	return ret_val;
 }
 
-char Human::Get_Char_Input_From_User() {
+char Human::Get_Char_Input_From_User() const {
 	char ret_val;
 	std::string user_input;
 
@@ -207,7 +207,7 @@ char Human::Get_Char_Input_From_User() {
 	return ret_val;
 }
 
-void Human::Print_Computer_Card_Recomendation(Card* a_lead_card_played) {
+void Human::Print_Computer_Card_Recomendation(Card* a_lead_card_played) const {
 	std::cout << "Help Mode Recomendation." << std::endl;
 	int index;
 	if (a_lead_card_played == NULL) {
@@ -242,7 +242,7 @@ void Human::Print_Computer_Card_Recomendation(Card* a_lead_card_played) {
 	std::cout << std::endl;
 }
 
-void Human::Print_Computer_Meld_Recommendation() {
+void Human::Print_Computer_Meld_Recommendation() const {
 	std::pair<std::vector<int>,int> recommended_card_with_best_meld = Get_Indexes_And_Meld_Number12_Best_Meld();
 
 	int recommended_meld_number = TO9(recommended_card_with_best_meld.second);

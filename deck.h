@@ -21,9 +21,9 @@ class Deck {
 	Card* Pop_Top_Card();
 	void Put_Card_Back_In_Deck(Card* a_card_ptr);
 
-	int Get_Stock_Size();
+	int Get_Stock_Size() const;
 
-	std::string Get_Stock_String();
+	std::string Get_Stock_String() const;
 
 	void Remove_All_Cards_From_Deck();
 

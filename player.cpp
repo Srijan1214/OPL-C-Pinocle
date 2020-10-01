@@ -37,7 +37,7 @@ void Player::Set_Trump_card(int a_trump_card) {
 	m_trump_card_id = a_trump_card;
 }
 
-int Player::Get_Meld_Type_12_From_Cards(std::vector<Card*>& a_meld_card_list) {
+int Player::Get_Meld_Type_12_From_Cards(std::vector<Card*>& a_meld_card_list) const {
 	std::vector<int> meld_card_identifiers(a_meld_card_list.size());
 	for (int i = 0; i < a_meld_card_list.size(); i++) {
 		int card_id = a_meld_card_list[i]->Get_Card_Id();
@@ -53,7 +53,7 @@ int Player::Get_Meld_Type_12_From_Cards(std::vector<Card*>& a_meld_card_list) {
 	return Get_Meld_Type_12_From_Cards(meld_card_identifiers);
 }
 
-int Player::Get_Meld_Type_12_From_Cards(std::vector<int>& a_meld_card_identifiers) {
+int Player::Get_Meld_Type_12_From_Cards(std::vector<int>& a_meld_card_identifiers) const {
 	// contains logic to detect if meld exists
 
 
@@ -177,7 +177,7 @@ void Player::Update_Meld_History(std::vector<Card*> & a_meld_card_list, int a_me
 	}
 }
 
-bool Player::Is_Meld_Allowed_By_History(std::vector<Card*> & a_meld_card_list, int a_meld_number_9){
+bool Player::Is_Meld_Allowed_By_History(std::vector<Card*> & a_meld_card_list, int a_meld_number_9) const {
 	if(m_no_of_times_meld_has_been_played[a_meld_number_9] == 0 ) {
 		return true;
 	}
@@ -191,7 +191,7 @@ bool Player::Is_Meld_Allowed_By_History(std::vector<Card*> & a_meld_card_list, i
 	return true;
 }
 
-std::string Player::Get_Console_Message() {
+std::string Player::Get_Console_Message() const{
 	std::string message;
 	message += "Hand: ";
 	message += Get_Hand_Pile_String();
@@ -207,7 +207,7 @@ std::string Player::Get_Console_Message() {
 	return message;
 }
 
-std::string Player::Get_Hand_Pile_String() {
+std::string Player::Get_Hand_Pile_String() const {
 	std::string message;
 	for (int i = 0; i < m_hand_card_pile.size(); i++) {
 		if (m_hand_meld_involvement_list[i].empty()) {
@@ -220,7 +220,7 @@ std::string Player::Get_Hand_Pile_String() {
 	return message;
 }
 
-std::string Player::Get_Capture_Pile_String() {
+std::string Player::Get_Capture_Pile_String() const {
 	std::string message;
 	int i;
 	for(Card* card_ptr:m_capture_card_pile) {
@@ -233,11 +233,11 @@ std::string Player::Get_Capture_Pile_String() {
 	return message;
 }
 
-std::string Player::Get_Melds_String() {
+std::string Player::Get_Melds_String() const {
 	std::string message;
 	for(int i = 0; i < m_current_meld_cards.size(); i++) {
 		for(auto& current_melds: m_current_meld_cards[i]) {
-			for(int& hand_index: current_melds) {
+			for(const int& hand_index: current_melds) {
 				message += m_hand_card_pile[hand_index]->Get_Card_String_Value();
 				if(m_hand_meld_involvement_list[hand_index].size() > 1) {
 					message += "*";
@@ -508,7 +508,7 @@ void Player::Load_Meld_Cards_From_String(std::string &a_meld_string, std::vector
 
 }
 
-std::vector<std::vector<int>> Player::Get_Meld_Logic_Vector() {
+std::vector<std::vector<int>> Player::Get_Meld_Logic_Vector() const{
 	std::vector<int> flush_requirements = {m_trump_suit_of_current_game * 6 + 1,
 								 m_trump_suit_of_current_game * 6 + 2,
 								 m_trump_suit_of_current_game * 6 + 3,
@@ -562,7 +562,7 @@ std::vector<std::vector<int>> Player::Get_Meld_Logic_Vector() {
 	return meld_logic_vector;
 }
 
-int Player::TO9(int a_12_based_index) {
+int Player::TO9(int a_12_based_index) const{
 	if (a_12_based_index < 2) {
 		return a_12_based_index;
 	} else if (a_12_based_index >= 2 && a_12_based_index <= 5) {
@@ -572,7 +572,7 @@ int Player::TO9(int a_12_based_index) {
 	}
 }
 
-void Player::add_to_meld_logic_vector(std::vector<std::vector<int>>& a_meld_logic_vector, std::vector<Card*>& a_card_pile) {
+void Player::add_to_meld_logic_vector(std::vector<std::vector<int>>& a_meld_logic_vector, const std::vector<Card*>& a_card_pile) const {
 	for(int i = 0; i < 12; i ++) {
 		for(Card* card_ptr: a_card_pile) {
 			if (m_which_card_used_for_meld[TO9(i)][card_ptr->Get_Card_Id()] == false) {
@@ -585,7 +585,7 @@ void Player::add_to_meld_logic_vector(std::vector<std::vector<int>>& a_meld_logi
 	}
 }
 
-void Player::update_logic_vector_with_history(std::vector<std::vector<int>>& a_meld_logic_vector) {
+void Player::Update_Logic_Vector_With_History(std::vector<std::vector<int>>& a_meld_logic_vector) const {
 	for(int i = 0; i < 12; i ++) {
 		for(int id = 0; id < 48; id++) {
 			if (m_which_card_used_for_meld[TO9(i)][id] == true) {
@@ -596,7 +596,7 @@ void Player::update_logic_vector_with_history(std::vector<std::vector<int>>& a_m
 }
 
 int Player::Get_Best_Meld_If_Card_Thrown(
-	std::vector<std::vector<int>>& a_meld_logic_vector, Card* a_card_ptr) {
+	std::vector<std::vector<int>>& a_meld_logic_vector, Card* a_card_ptr) const{
 
 	int max_meld_score = INT_MIN;
 	int meld_number_played = -1;
@@ -632,7 +632,7 @@ int Player::Get_Best_Meld_If_Card_Thrown(
 	return meld_number_played;
 }
 
-std::pair<int,int> Player::Get_Best_MeldCardIndexPair_From_Logic(std::vector<std::vector<int>>& a_meld_logic_vector) {
+std::pair<int,int> Player::Get_Best_MeldCardIndexPair_From_Logic(std::vector<std::vector<int>>& a_meld_logic_vector) const{
 	int max_meld_score = INT_MIN;
 	int best_meld_number = -1;
 	int best_meld_index = -1;
@@ -665,7 +665,7 @@ std::pair<int,int> Player::Get_Best_MeldCardIndexPair_From_Logic(std::vector<std
 
 }
 
-std::pair<int, int> Player::Find_IndexMeldPair_Of_Card_To_Throw() {
+std::pair<int, int> Player::Find_IndexMeldPair_Of_Card_To_Throw() const {
 	// Finds out highest meld is available after a certain card is removed.
 	// Does this for all cards. Returns the card that results in the highest value.
 
@@ -682,13 +682,13 @@ std::pair<int, int> Player::Find_IndexMeldPair_Of_Card_To_Throw() {
 	return hand_pile_best_meld_pair;
 }
 
-std::pair<std::vector<int>, int> Player::Get_Indexes_And_Meld_Number12_Best_Meld() {
+std::pair<std::vector<int>, int> Player::Get_Indexes_And_Meld_Number12_Best_Meld() const{
 	std::vector<std::vector<int>> meld_logic_vector = Get_Meld_Logic_Vector();
 
 	add_to_meld_logic_vector(meld_logic_vector, m_hand_card_pile);
 
 	// update meld_logic_according to meld history.
-	update_logic_vector_with_history(meld_logic_vector);
+	Update_Logic_Vector_With_History(meld_logic_vector);
 	
 
 	int max_meld_score = INT_MIN;
@@ -730,7 +730,7 @@ std::pair<std::vector<int>, int> Player::Get_Indexes_And_Meld_Number12_Best_Meld
 	}
 }
 
-int Player::Search_Card_In_Pile(int a_id) {
+int Player::Search_Card_In_Pile(int a_id) const {
 	const size_t& hand_pile_size = m_hand_card_pile.size();
 
 	for(int i = 0; i < hand_pile_size; i++) {
@@ -742,7 +742,7 @@ int Player::Search_Card_In_Pile(int a_id) {
 	return -1;
 }
 
-bool Player::Is_First_Card_Greater_Than_Lead(int a_card_first, int a_card_lead) {
+bool Player::Is_First_Card_Greater_Than_Lead(int a_card_first, int a_card_lead) const{
 	if (Card::Get_Suit_From_Id(a_card_first) == m_trump_suit_of_current_game &&
 		Card::Get_Suit_From_Id(a_card_lead) != m_trump_suit_of_current_game) {
 		return true;
@@ -765,7 +765,7 @@ bool Player::Is_First_Card_Greater_Than_Lead(int a_card_first, int a_card_lead) 
 	return false;
 }
 
-int Player::Find_Index_of_Smallest_Card_Greater_Than_Card(Card* a_card_ptr) {
+int Player::Find_Index_of_Smallest_Card_Greater_Than_Card(Card* a_card_ptr) const {
 	const int& hand_pile_size = m_hand_card_pile.size();
 
 	int argument_card_id = a_card_ptr->Get_Card_Id();
@@ -785,7 +785,7 @@ int Player::Find_Index_of_Smallest_Card_Greater_Than_Card(Card* a_card_ptr) {
 	return min_card_index;
 }
 
-int Player::Find_Index_Of_Smallest_Card() {
+int Player::Find_Index_Of_Smallest_Card() const {
 	const int& hand_pile_size = m_hand_card_pile.size();
 
 	int min_card_weight = INT_MAX;
@@ -801,7 +801,7 @@ int Player::Find_Index_Of_Smallest_Card() {
 	return index;
 }
 
-int Player::Find_Index_Of_Greatest_Card() {
+int Player::Find_Index_Of_Greatest_Card() const {
 	const int& hand_pile_size = m_hand_card_pile.size();
 
 	int max_card_weight = INT_MIN;
@@ -817,7 +817,7 @@ int Player::Find_Index_Of_Greatest_Card() {
 	return index;
 }
 
-int Player::Get_Card_Weight(Card* card_ptr) {
+int Player::Get_Card_Weight(Card* card_ptr) const {
 	int face_weight = card_ptr->Get_Card_Weight();
 	if(card_ptr->Get_Suit() == m_trump_suit_of_current_game) {
 		// add a big number to face weight.
@@ -858,7 +858,7 @@ void Player::Remove_Card_From_Pile(int a_index) {
 	m_hand_meld_involvement_list.pop_back();
 }
 
-int Player::Get_No_Of_Remaining_Cards() {
+int Player::Get_No_Of_Remaining_Cards() const {
 	return m_hand_card_pile.size();
 }
 

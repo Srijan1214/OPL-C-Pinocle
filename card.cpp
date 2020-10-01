@@ -14,7 +14,7 @@ Card::Card(int a_id) : m_id(a_id) {
 // Storing spades first, then clubs, then hearts, then diamonds.
 // Within each face two of the same cards are stored side by side and in increasing order.
 // Cards are stored in the following order 9S, 9S, 10S, 10S, ..., 9C, ..., 9H, ..., AD, AD
-std::string Card::Get_Card_String_Value() {
+std::string Card::Get_Card_String_Value() const {
 	const int suit_val = m_id / 12;
 	const int face_val = (m_id % 12) / 2;
 
@@ -42,22 +42,22 @@ std::string Card::Get_String_From_Id(int a_id) {
 	return return_string;
 }
 
-void Card::Print_Card () {
+void Card::Print_Card () const {
 	const int suit_val = m_id / 12;
 	const int face_val = (m_id % 12) / 2;
 
 	std::cout << m_face_char_arr[face_val] << m_suit_char_arr[suit_val] << "  ";
 }
 
-int Card::Get_Card_Weight() {
+int Card::Get_Card_Weight() const {
 	return m_face_weights[Get_Face()];
 }
 
-int Card::Get_Face() {
+int Card::Get_Face() const {
 	return (m_id % 12) / 2;
 }
 
-int Card::Get_Suit() {
+int Card::Get_Suit() const {
 	return m_id / 12;
 }
 
@@ -94,6 +94,6 @@ int Card::Get_Card_Id_From_String(std::string &a_card_str) {
 	return suit * 12 + face * 2;
 }
 
-int Card::Get_Card_Id() {
+int Card::Get_Card_Id() const {
 	return m_id;
 }

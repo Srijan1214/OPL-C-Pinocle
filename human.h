@@ -14,16 +14,16 @@ class Human : public Player {
 
    private:
 	// Print the Cards with an Index above them to help in user input
-	void Print_Hand_and_Meld_With_Id();
+	void Print_Hand_and_Meld_With_Id() const;
 
 	// Parse a string of numbers into a vector of numbers
-	std::vector<int> Parse_Indexes_Vector_From_String(std::string a_user_input);
+	std::vector<int> Parse_Indexes_Vector_From_String(std::string a_user_input) const;
 	
 	// Get Validated Input from User
-	int Get_Integer_Input_From_User();
-	char Get_Char_Input_From_User();
+	int Get_Integer_Input_From_User() const;
+	char Get_Char_Input_From_User() const;
 
 	// Help Mode Functions
-	void Print_Computer_Card_Recomendation(Card* a_lead_card_played);
-	void Print_Computer_Meld_Recommendation();
+	void Print_Computer_Card_Recomendation(Card* a_lead_card_played) const ;
+	void Print_Computer_Meld_Recommendation() const ;
 };

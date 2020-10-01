@@ -47,7 +47,7 @@ void Deck::Put_Card_Back_In_Deck(Card* a_card_ptr) {
 	m_card_list.push_back(a_card_ptr);
 }
 
-std::string Deck::Get_Stock_String() {
+std::string Deck::Get_Stock_String() const {
 	std::string ret_string = "";
 	for (int i = m_card_list.size() - 1; i >= 0; i-- ) {
 		Card* card_ptr = m_card_list[i];
@@ -71,6 +71,6 @@ void Deck::Load_Stock_Pile_From_String(std::string &a_stock_string, std::vector<
 	std::reverse(m_card_list.begin(), m_card_list.end());
 }
 
-int Deck::Get_Stock_Size() {
+int Deck::Get_Stock_Size() const {
 	return m_card_list.size();
 }

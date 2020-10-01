@@ -5,12 +5,12 @@ class Card {
    public:
 	int m_id;
 	Card(int a_id);
-	std::string Get_Card_String_Value();
-	int Get_Card_Weight();
-	int Get_Face();
-	int Get_Suit();
-	void Print_Card();
-	int Get_Card_Id();
+	std::string Get_Card_String_Value() const;
+	int Get_Card_Weight() const;
+	int Get_Face() const;
+	int Get_Suit() const;
+	void Print_Card() const;
+	int Get_Card_Id() const;
 	static const char m_suit_char_arr[4]; 
 	static const char m_face_char_arr[6];
 	static const int m_face_weights[6];

@@ -32,7 +32,7 @@ class Round {
 	void Set_Cur_Round_Number(int a_cur_round);
 	void Increase_Round_Number();
 	void Set_Previous_Scores(std::vector<int> a_prev_scores);
-	void Save_To_File(std::string a_path);
+	void Save_To_File(std::string a_path) const;
 	void Load_From_File(std::string a_path);
 
    private:
@@ -45,11 +45,11 @@ class Round {
 	void Play_Turn_And_Pick_Up_From_Stock();
 	void Play_Turn_And_Dont_Pick_Up_From_Stock();
 
-	void Print_Player1_Hand();
-	void Print_Player2_Hand();
-	void Print_Interface_Message();
+	void Print_Player1_Hand() const;
+	void Print_Player2_Hand() const;
+	void Print_Interface_Message() const;
 
-	void Ask_Input_From_Menu(int a_cur_player);
+	void Ask_Input_From_Menu(int a_cur_player) const;
 
 	bool m_has_trump_card_been_used;
 };
