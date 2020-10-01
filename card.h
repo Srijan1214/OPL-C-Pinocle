@@ -21,6 +21,7 @@ class Card {
 	// Within each face two of the same cards are stored side by side and in increasing order.
 	// Cards are stored in the following order 9S, 9S, 10S, 10S, ..., 9C, ..., 9H, ..., AD, AD
 	int m_id;
+
 	Card(int a_id);
 	std::string Get_Card_String_Value() const;
 	int Get_Card_Face_Weight() const;
@@ -35,6 +36,5 @@ class Card {
 	static int Get_Weight_From_Id(int a_id);
 	static std::string Get_String_From_Id(int);
 
-	static int Get_Card_Id_From_String(std::string &a_card_str);
-	std::string m_card_type;
+	static int Get_Card_Id_From_String(const std::string &a_card_str);
 };

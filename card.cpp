@@ -31,7 +31,6 @@ const int Card::m_face_weights[6] = {0, 10, 2, 3, 4, 11};
  * Assistance Received: None
  **********************************************************************/
 Card::Card(int a_id) : m_id(a_id) {
-	m_card_type = Get_Card_String_Value();
 }
 
 
@@ -90,42 +89,94 @@ std::string Card::Get_String_From_Id(int a_id) {
 
 /* *********************************************************************
 Function Name: Get_Card_Face_Weight
-Purpose: To calculate the average grade in a class
+Purpose: To get the weight of the card's face.
 Parameters:
-            grades[], an array passed by value. It holds individual grades
-            size, an integer. It refers to the number of students in the class
-Return Value: The average grade in the class, a real value
-Local Variables:
-            temp[], an integer array used to sort the grades
-Algorithm:
-            1) Add all the grades
-            2) Divide the sum by the number of students in class to calculate the average
+            None
+
+Return Value: The points earned when a card type of this face is eaten.
 Assistance Received: none
 ********************************************************************* */
 int Card::Get_Card_Face_Weight() const {
 	return m_face_weights[Get_Face()];
 }
 
+/* *********************************************************************
+Function Name: Get_Face
+Purpose: To get the face number of the card.
+Parameters:
+            None
+
+Return Value: The face number of the card.
+Assistance Received: none
+********************************************************************* */
 int Card::Get_Face() const {
 	return (m_id % 12) / 2;
 }
 
+/* *********************************************************************
+Function Name: Get_Suit
+Purpose: To get the suit number of the card.
+Parameters:
+            None
+
+Return Value: The suit number of the card.
+Assistance Received: none
+********************************************************************* */
 int Card::Get_Suit() const {
 	return m_id / 12;
 }
 
+/* *********************************************************************
+Function Name: Get_Face_From_Id
+Purpose: Static Utility function to get the face number of a card id.
+Parameters:
+*           a_id, an int passed by value. It holds the id that the card represents
+*
+Return Value: The face number of the id.
+Assistance Received: none
+********************************************************************* */
 int Card::Get_Face_From_Id(int a_id) {
 	return (a_id % 12) / 2;
 }
+
+
+// -------------------------------------------------------------------------------------------------------//
+/* *********************************************************************
+Function Name: Get_Face_From_Id
+Purpose: Static Utility function to get the Suit number of a card id.
+Parameters:
+*           a_id, an int passed by value. It holds the id that the card represents
+*
+Return Value: The suit number of the id.
+Assistance Received: none
+********************************************************************* */
 int Card::Get_Suit_From_Id(int a_id) {
 	return a_id / 12;
 }
 
+/* *********************************************************************
+Function Name: Get_Weight_From_Id
+Purpose: Static Utility function to get the face weight from the card id.
+Parameters:
+*           a_id, an int passed by value. It holds the id that the card represents
+*
+Return Value: The weight value of the face of the id.
+Assistance Received: none
+********************************************************************* */
 int Card::Get_Weight_From_Id(int a_id) {
 	return m_face_weights[Get_Face_From_Id(a_id)];
 }
 
-int Card::Get_Card_Id_From_String(std::string &a_card_str) {
+/* *********************************************************************
+Function Name: Get_Card_Id_From_String
+Purpose: Static Utility function to get the appropriate card id from a card string.
+Parameters:
+*           a_card_str, an int passed by const reference. It holds the card string value. E.g. "XH"
+*
+Return Value: The appropriate card id.
+Assistance Received: none
+********************************************************************* */
+int Card::Get_Card_Id_From_String(const std::string &a_card_str) {
 	int face = -1, suit = -1;
 
 	switch (a_card_str[0]) {
@@ -147,6 +198,14 @@ int Card::Get_Card_Id_From_String(std::string &a_card_str) {
 	return suit * 12 + face * 2;
 }
 
+/* *********************************************************************
+Function Name: Get_Card_Id
+Purpose: Getter for the card id of a card.
+Parameters:
+*           None
+Return Value: The card id of this card.
+Assistance Received: none
+********************************************************************* */
 int Card::Get_Card_Id() const {
 	return m_id;
 }
