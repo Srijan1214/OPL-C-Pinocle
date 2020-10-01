@@ -27,7 +27,6 @@ class Player {
 	void Add_Cards_To_Player_Capture_Pile (Card* a_card_ptr1, Card* a_card_ptr2);
 
 	void Set_Trump_Suit(int);
-	void Set_Round_Score(int a_score);
 	void Set_Trump_card(int);
 	
 	std::string Get_Console_Message() const;
@@ -68,11 +67,10 @@ class Player {
 	std::vector<int> m_no_of_times_meld_has_been_played;
 	std::vector<std::vector<bool>> m_which_card_used_for_meld;
 	
-	int Get_Meld_Type_12_From_Cards(std::vector<Card*> &) const;
+	int Get_Meld_Type_12_From_Cards(const std::vector<Card*> &) const;
 	int Get_Meld_Type_12_From_Cards(std::vector<int> &) const;
 	int m_trump_suit_of_current_game;
 	int m_trump_card_id;
-	int m_round_score;
 
 
 	// AI logic.
@@ -87,7 +85,7 @@ class Player {
 
 	// Meld History Functions
 	bool Is_Meld_Allowed_By_History(std::vector<Card*> & a_meld_card_list, int meld_number) const;
-	void Update_Meld_History(std::vector<Card*> &, int);
+	void Update_Meld_History(const std::vector<Card*> &, int);
 
 	// Utilities
 	int Find_Index_of_Smallest_Card_Greater_Than_Card(Card* card_ptr) const;

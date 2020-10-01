@@ -42,7 +42,6 @@ void Round::Play_A_Round() {
 	//From now on cards aren't picked up from the stock pile.
 	while(m_players[m_cur_lead_player]->Get_No_Of_Remaining_Cards() > 0) {
 		Play_Turn_And_Dont_Pick_Up_From_Stock();
-		m_players[m_cur_lead_player]->Set_Round_Score(m_scores[m_cur_lead_player]);
 	}
 
 	if(m_scores[0] > m_scores[1]) {
@@ -343,7 +342,6 @@ void Round::Play_Turn_And_Dont_Pick_Up_From_Stock() {
 	if (meld_index >= 0 && meld_index < 9) {
 		m_scores[m_cur_lead_player] += Player::m_meld_scores[meld_index];
 	}
-	m_players[m_cur_lead_player]->Set_Round_Score(m_scores[m_cur_lead_player]);
 }
 
 void Round::Play_Turn_And_Pick_Up_From_Stock() {
