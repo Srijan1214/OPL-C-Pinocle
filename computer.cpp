@@ -1,3 +1,15 @@
+
+/*
+ ************************************************************
+ * Name: Srijan Prasad Joshi
+ * Project: Pinochle C++
+ * Class: OPL Fall 20
+ * Date: 09/30/2020
+ ************************************************************
+*/
+
+// Created by Srijan Joshi on 09/10/19.
+
 #include "computer.h"
 
 Card* Computer::Get_Card_To_Play(Card* a_lead_card_played) {

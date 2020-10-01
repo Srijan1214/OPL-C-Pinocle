@@ -1,3 +1,15 @@
+
+/*
+ ************************************************************
+ * Name: Srijan Prasad Joshi
+ * Project: Pinochle C++
+ * Class: OPL Fall 20
+ * Date: 09/30/2020
+ ************************************************************
+*/
+
+// Created by Srijan Joshi on 09/10/19.
+
 #include "player.h"
 
 const int Player::m_meld_scores[9] = {150, 40, 20, 10, 100, 80, 60, 40, 40};

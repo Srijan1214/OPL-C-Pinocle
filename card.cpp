@@ -1,3 +1,15 @@
+
+/*
+ ************************************************************
+ * Name: Srijan Prasad Joshi
+ * Project: Pinochle C++
+ * Class: OPL Fall 20
+ * Date: 09/30/2020
+ ************************************************************
+*/
+
+// Created by Srijan Joshi on 09/10/19.
+
 #include "card.h"
 
 const char Card::m_suit_char_arr[4] = {'S', 'C', 'H', 'D'};

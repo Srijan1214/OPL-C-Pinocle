@@ -1,3 +1,15 @@
+
+/*
+ ************************************************************
+ * Name: Srijan Prasad Joshi
+ * Project: Pinochle C++
+ * Class: OPL Fall 20
+ * Date: 09/30/2020
+ ************************************************************
+*/
+
+// Created by Srijan Joshi on 09/10/19.
+
 #include "round.h"
 
 Round::Round() : m_players({&m_player1,&m_player2}), m_scores(2,0), m_has_trump_card_been_used(false){
