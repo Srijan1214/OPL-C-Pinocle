@@ -66,7 +66,7 @@ void Round::Play_Cards_Against_Each_Other() {
 	int who_won = -1;
 
 	if(lead_card->Get_Suit() == chase_card->Get_Suit()) {
-		if(lead_card->Get_Card_Weight() >= chase_card->Get_Card_Weight() ) {
+		if(lead_card->Get_Card_Face_Weight() >= chase_card->Get_Card_Face_Weight() ) {
 			who_won = m_cur_lead_player;
 		} else {
 			who_won = chase_player;
@@ -80,10 +80,10 @@ void Round::Play_Cards_Against_Each_Other() {
 	}
 
 	if(who_won == m_cur_lead_player) {
-		m_scores[m_cur_lead_player] += (lead_card->Get_Card_Weight() + chase_card->Get_Card_Weight());
+		m_scores[m_cur_lead_player] += (lead_card->Get_Card_Face_Weight() + chase_card->Get_Card_Face_Weight());
 		m_players[m_cur_lead_player]->Add_Cards_To_Player_Capture_Pile(lead_card, chase_card);
 	} else {
-		m_scores[chase_player] += (lead_card->Get_Card_Weight() + chase_card->Get_Card_Weight());
+		m_scores[chase_player] += (lead_card->Get_Card_Face_Weight() + chase_card->Get_Card_Face_Weight());
 		m_players[chase_player]->Add_Cards_To_Player_Capture_Pile(lead_card, chase_card);
 		//switch lead and chase player uf chase player wins
 		m_cur_lead_player^= 1;

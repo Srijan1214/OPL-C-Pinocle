@@ -830,7 +830,7 @@ int Player::Find_Index_Of_Greatest_Card() const {
 }
 
 int Player::Get_Card_Weight(Card* card_ptr) const {
-	int face_weight = card_ptr->Get_Card_Weight();
+	int face_weight = card_ptr->Get_Card_Face_Weight();
 	if(card_ptr->Get_Suit() == m_trump_suit_of_current_game) {
 		// add a big number to face weight.
 		return face_weight + 100;

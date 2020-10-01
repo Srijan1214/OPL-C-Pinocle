@@ -15,13 +15,17 @@
 
 class Card {
    public:
+	// There are 2 cards of the same suit and face.
+	// There are 6 faces and 4 suits.
+	// Storing spades first, then clubs, then hearts, then diamonds.
+	// Within each face two of the same cards are stored side by side and in increasing order.
+	// Cards are stored in the following order 9S, 9S, 10S, 10S, ..., 9C, ..., 9H, ..., AD, AD
 	int m_id;
 	Card(int a_id);
 	std::string Get_Card_String_Value() const;
-	int Get_Card_Weight() const;
+	int Get_Card_Face_Weight() const;
 	int Get_Face() const;
 	int Get_Suit() const;
-	void Print_Card() const;
 	int Get_Card_Id() const;
 	static const char m_suit_char_arr[4]; 
 	static const char m_face_char_arr[6];
