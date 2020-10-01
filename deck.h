@@ -39,7 +39,7 @@ class Deck {
 
 	void Remove_All_Cards_From_Deck();
 
-	void Load_Stock_Pile_From_String(std::string &a_stock_string, std::vector<bool> &a_cards_that_have_been_used);
+	void Load_Stock_Pile_From_String(const std::string &a_stock_string, std::vector<bool> &a_cards_that_have_been_used);
    private:
 	void Destroy_All_Card_Pointers();
 };
