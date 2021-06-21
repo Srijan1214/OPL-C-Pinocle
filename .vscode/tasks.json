@@ -4,30 +4,10 @@
 		{
 			"type": "process",
 			"label": "g++ build active file",
-			"command": "/usr/bin/g++",
+			"command": "/usr/bin/make",
 			"args": [
-				"-Wshadow",
-				"-Wall",
-				"-Wno-sign-compare",
-				"-fsanitize=address",
-				"-fsanitize=undefined",
-				"-D_GLIBCXX_DEBUG",
-				"-g",
-				"${workspaceFolder}/main.cpp",
-				"${workspaceFolder}/game.cpp",
-				"${workspaceFolder}/round.cpp",
-				"${workspaceFolder}/player.cpp",
-				"${workspaceFolder}/human.cpp",
-				"${workspaceFolder}/deck.cpp",
-				"${workspaceFolder}/card.cpp",
-				"${workspaceFolder}/computer.cpp",
-				"-o",
-				"${workspaceFolder}/debug"
-			],
-			"options": {
-				"cwd": "/usr/bin"
-			},
-			"problemMatcher": [
+				"debug"
+			], "problemMatcher": [
 				"$gcc"
 			],
 			"group": "build"

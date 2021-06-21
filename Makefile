@@ -1,4 +1,4 @@
-# all:
+# all
 # 	g++ main.cpp game.cpp round.cpp player.cpp human.cpp deck.cpp card.cpp computer.cpp
 # 	./a.out 
 #
@@ -11,8 +11,7 @@ CPP = main.cpp $(wildcard *.cpp)
 ifeq "$(findstring debug, $(MAKECMDGOALS))" "debug"
 	BIN = debug
 	BUILD_DIR = ./build_debug
-	CCCALLFLAGS += -g3 -O0 -D_DEBUG -D_GLIBCXX_DEBUG -Wall -Wno-unknown-pragmas -Wno-format
-	CXX_FLAGS += -Wfatal-errors -Wall -Wextra -Wpedantic -Wconversion -Wshadow
+	CXX_FLAGS += -g -O0 -D_DEBUG -D_GLIBCXX_DEBUG -Wall -Wno-unknown-pragmas -Wno-format -Wshadow -Wall -Wno-sign-compare -fsanitize=address
 else
 	BIN = mybin
 	BUILD_DIR = ./build_release
@@ -30,7 +29,9 @@ $(BIN) : $(BUILD_DIR)/$(BIN)
 $(BUILD_DIR)/$(BIN) : $(OBJ)
 	# Create build directories - same structure as sources.
 	mkdir -p $(@D)
-	# Just link all the object files.
+
+	#
+	# Linking all the object files.
 	$(CXX) $(CXX_FLAGS) $^ -o $@
 
  # Include all .d files

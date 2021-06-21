@@ -5,11 +5,11 @@
 			"name": "g++ build and debug active file",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${workspaceFolder}/debug",
+			"program": "${workspaceFolder}/build_debug/debug",
 			"stopAtEntry": false,
 			"cwd": "${workspaceFolder}",
 			"environment": [],
-			"externalConsole": true,
+			"externalConsole": false,
 			"MIMode": "gdb",
 			"setupCommands": [
 				{
