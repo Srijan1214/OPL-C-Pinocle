@@ -554,14 +554,6 @@ Assistance Received: none
 void Player::Load_Meld_Cards_From_String(std::string &a_meld_string, std::vector<bool> &a_cards_that_have_been_used) {
 	std::vector<std::vector<int>> logic_vector = Get_Meld_Logic_Vector();
 	logic_vector[2 + m_trump_suit_of_current_game] = std::vector<int>(48,-1);
-	std::vector<int> total_cards_in_melds(logic_vector.size(),0);
-	for(int r = 0; r < logic_vector.size(); r++) {
-		for(int c = 0; c < logic_vector[r].size(); c+=2) {
-			if(logic_vector[r][c] == 0) {
-				total_cards_in_melds[r]+=1;
-			}
-		}
-	}
 	
 	std::stringstream s(a_meld_string);
 	std::string card_str;
@@ -593,11 +585,6 @@ void Player::Load_Meld_Cards_From_String(std::string &a_meld_string, std::vector
 	// Now I have the data structure of meld_card_strings 
 	// and meld_numbers_12_vec to help me give the correct id to each card string.
 
-	// the following will keep the history of each card and 
-	// tells what id the current card should be.
-	std::vector<int> id_to_change_cur_card_to(48, -1);
-	std::vector<std::vector<int>> meld_card_ids;
-
 	// a lambda function to change the id to a duplicate card
 	auto get_id_for_duplicate_cards = [](int a_id){
 		if(a_id % 2 == 0){
@@ -606,6 +593,11 @@ void Player::Load_Meld_Cards_From_String(std::string &a_meld_string, std::vector
 			return a_id - 1;
 		}
 	};
+
+	// the following will keep the history of each card and 
+	// tells what id the current card should be.
+	std::vector<int> id_to_change_cur_card_to(48, -1);
+	std::vector<std::vector<int>> meld_card_ids;
 
 	// the following keeps the count of the id for the stared id
 	std::vector<int> count_of_ids_for_stared_cards(48, -1);

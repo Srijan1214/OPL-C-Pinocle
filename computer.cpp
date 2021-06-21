@@ -12,6 +12,20 @@
 
 #include "computer.h"
 
+/* *********************************************************************
+Function Name: Get_Card_To_Play
+Purpose: To get the card that the computer wants to play
+Parameters:
+            a_lead_card_played, the card that the lead player played.
+Return Value: The Card* for the card that the lead player wants to play.
+Local Variables:
+            temp[], an integer array used to sort the grades
+Algorithm:
+            1) Get best card from Find_IndexMeldPair_Of_Card_To_Throw if the computer is lead. Hence, find 
+			the best meld possible and play the card that results in that best meld.
+            2) If computer is lead, then play the biggest card.
+Assistance Received: none
+********************************************************************* */
 Card* Computer::Get_Card_To_Play(Card* a_lead_card_played) {
 	std::cout << "Computer turn." << std::endl;
 	int index;
@@ -50,6 +64,16 @@ Card* Computer::Get_Card_To_Play(Card* a_lead_card_played) {
 	return card_ptr;
 }
 
+/* *********************************************************************
+Function Name: Get_Meld_To_Play
+Purpose: To Get the meld to play.
+Parameters:
+            None
+Return Value: Meld number played.
+Algorithm:
+            1) Play the best meld possible in the hand.
+Assistance Received: none
+********************************************************************* */
 int Computer::Get_Meld_To_Play() {
 	std::pair<std::vector<int>,int> recommended_card_with_best_meld = Get_Indexes_And_Meld_Number12_Best_Meld();
 

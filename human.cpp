@@ -14,6 +14,20 @@
 
 Human::Human() {}
 
+/* *********************************************************************
+Function Name: Print_Hand_and_Meld_With_Id
+Purpose: To get the card that the computer wants to play
+Parameters:
+            a_lead_card_played, the card that the lead player played.
+Return Value: The Card* for the card that the lead player wants to play.
+Local Variables:
+            temp[], an integer array used to sort the grades
+Algorithm:
+            1) Get best card from Find_IndexMeldPair_Of_Card_To_Throw if the computer is lead. Hence, find 
+			the best meld possible and play the card that results in that best meld.
+            2) If computer is lead, then play the biggest card.
+Assistance Received: none
+********************************************************************* */
 void Human::Print_Hand_and_Meld_With_Id() const{
 	std::string index_string = "";
 	std::string cards_string = "";
@@ -62,6 +76,20 @@ void Human::Print_Hand_and_Meld_With_Id() const{
 	std::cout << std::endl;
 }
 
+/* *********************************************************************
+Function Name: Get_Card_To_Play
+Purpose: To get the card that the computer wants to play
+Parameters:
+            a_lead_card_played, the card that the lead player played.
+Return Value: The Card* for the card that the lead player wants to play.
+Local Variables:
+            temp[], an integer array used to sort the grades
+Algorithm:
+            1) Get best card from Find_IndexMeldPair_Of_Card_To_Throw if the computer is lead. Hence, find 
+			the best meld possible and play the card that results in that best meld.
+            2) If computer is lead, then play the biggest card.
+Assistance Received: none
+********************************************************************* */
 Card* Human::Get_Card_To_Play(Card* a_lead_card_played) {
 	int index = -1;
 	int total_cards = m_hand_card_pile.size();
@@ -81,6 +109,20 @@ Card* Human::Get_Card_To_Play(Card* a_lead_card_played) {
 	return ret_card;
 }
 
+/* *********************************************************************
+Function Name: Parse_Indexes_Vector_From_String
+Purpose: To get the card that the computer wants to play
+Parameters:
+            a_lead_card_played, the card that the lead player played.
+Return Value: The Card* for the card that the lead player wants to play.
+Local Variables:
+            temp[], an integer array used to sort the grades
+Algorithm:
+            1) Get best card from Find_IndexMeldPair_Of_Card_To_Throw if the computer is lead. Hence, find 
+			the best meld possible and play the card that results in that best meld.
+            2) If computer is lead, then play the biggest card.
+Assistance Received: none
+********************************************************************* */
 std::vector<int> Human::Parse_Indexes_Vector_From_String(std::string a_user_input) const {
 	std::vector<int> ret_vec;
 
@@ -109,6 +151,19 @@ std::vector<int> Human::Parse_Indexes_Vector_From_String(std::string a_user_inpu
 
 }
 
+/* *********************************************************************
+Function Name: Get_Meld_To_Play
+Purpose: To prompt user for the meld cards and check if input meld valid.
+Parameters:
+			Noen
+Return Value: The meld number player by the user. -1 if meld is no meld played.
+Algorithm:
+            1) Get best card from Find_IndexMeldPair_Of_Card_To_Throw if the computer is lead. Hence, find 
+			the best meld possible and play the card that results in that best meld.
+            2) If computer is lead, then play the biggest card.
+			3) Prompt the user to play the meld and display recommended meld if help mode active.
+Assistance Received: none
+********************************************************************* */
 int Human::Get_Meld_To_Play() {
 	std::string user_line_input;
 	char meld_yes_no;
@@ -189,6 +244,14 @@ int Human::Get_Meld_To_Play() {
 	return meld_number_9;
 }
 
+/* *********************************************************************
+Function Name: Get_Integer_Input_From_User
+Purpose: To get the integer input from the user
+Parameters:
+            None
+Return Value: The int input.
+Assistance Received: none
+********************************************************************* */
 int Human::Get_Integer_Input_From_User() const{
 	int ret_val = -1;
 	std::string user_input;
@@ -207,6 +270,14 @@ int Human::Get_Integer_Input_From_User() const{
 	return ret_val;
 }
 
+/* *********************************************************************
+Function Name: Get_Char_Input_From_User
+Purpose: To get a char input from stdin.
+Parameters:
+            None
+Return Value: The char input.
+Assistance Received: none
+********************************************************************* */
 char Human::Get_Char_Input_From_User() const {
 	char ret_val;
 	std::string user_input;
@@ -219,6 +290,14 @@ char Human::Get_Char_Input_From_User() const {
 	return ret_val;
 }
 
+/* *********************************************************************
+Function Name: Print_Computer_Card_Recomendation
+Purpose: To Print the best card recommended by the computer.
+Parameters:
+            a_lead_card_played, the card that the lead player played.
+Return Value: None
+Assistance Received: none
+********************************************************************* */
 void Human::Print_Computer_Card_Recomendation(Card* a_lead_card_played) const {
 	std::cout << "Help Mode Recomendation." << std::endl;
 	int index;
@@ -254,6 +333,14 @@ void Human::Print_Computer_Card_Recomendation(Card* a_lead_card_played) const {
 	std::cout << std::endl;
 }
 
+/* *********************************************************************
+Function Name: Print_Computer_Meld_Recommendation
+Purpose: To Print the meld recommended by the  computer.
+Parameters:
+		None
+Return Value: None
+Assistance Received: none
+********************************************************************* */
 void Human::Print_Computer_Meld_Recommendation() const {
 	std::pair<std::vector<int>,int> recommended_card_with_best_meld = Get_Indexes_And_Meld_Number12_Best_Meld();
 

@@ -15,6 +15,19 @@
 Round::Round() : m_players({&m_player1,&m_player2}), m_scores(2,0), m_has_trump_card_been_used(false){
 }
 
+/* *********************************************************************
+Function Name: Play_A_Round
+Purpose: To play a new round if the round is active.
+Parameters:
+			None
+Return Value: None
+Local Variables:
+            None
+Algorithm:
+            1) Plays through the game untill all the cards are finished.
+            2) This is the main loop of the game.
+Assistance Received: none
+********************************************************************* */
 void Round::Play_A_Round() {
 	// Tell the players which suit is trump suit
 	for(Player* player_ptr:m_players) {
@@ -54,6 +67,19 @@ void Round::Play_A_Round() {
 
 }
 
+/* *********************************************************************
+Function Name: Play_Cards_Against_Each_Other
+Purpose: To play a new round if the round is active.
+Parameters:
+			None
+Return Value: None
+Local Variables:
+            None
+Algorithm:
+            1) Plays through the game untill all the cards are finished.
+            2) This is the main loop of the game.
+Assistance Received: none
+********************************************************************* */
 void Round::Play_Cards_Against_Each_Other() {
 	const int chase_player = m_cur_lead_player ^ 1; // The other of the lead players
 	Ask_Input_From_Menu(m_cur_lead_player);
@@ -96,6 +122,19 @@ void Round::Play_Cards_Against_Each_Other() {
 	
 }
 
+/* *********************************************************************
+Function Name: Deal_Cards_From_Deck_To_Players
+Purpose: To play a new round if the round is active.
+Parameters:
+			None
+Return Value: None
+Local Variables:
+            None
+Algorithm:
+            1) Plays through the game untill all the cards are finished.
+            2) This is the main loop of the game.
+Assistance Received: none
+********************************************************************* */
 void Round::Deal_Cards_From_Deck_To_Players() {
 	m_deck.Shuffle_Deck();
 
@@ -113,6 +152,19 @@ void Round::Deal_Cards_From_Deck_To_Players() {
 	Pick_Up_Trump_Card();
 }
 
+/* *********************************************************************
+Function Name: Decide_First_Player_Through_Coin_Toss
+Purpose: To play a new round if the round is active.
+Parameters:
+			None
+Return Value: None
+Local Variables:
+            None
+Algorithm:
+            1) Plays through the game untill all the cards are finished.
+            2) This is the main loop of the game.
+Assistance Received: none
+********************************************************************* */
 void Round::Decide_First_Player_Through_Coin_Toss() {
 	const int coin_toss_value = rand() % 2; // Tails is 1 and Heads is 0.
 
@@ -138,24 +190,89 @@ void Round::Decide_First_Player_Through_Coin_Toss() {
 	std::cout << std::endl;
 }
 
+/* *********************************************************************
+Function Name: Pick_Up_Trump_Card
+Purpose: To play a new round if the round is active.
+Parameters:
+			None
+Return Value: None
+Local Variables:
+            None
+Algorithm:
+            1) Plays through the game untill all the cards are finished.
+            2) This is the main loop of the game.
+Assistance Received: none
+********************************************************************* */
 void Round::Pick_Up_Trump_Card() {
 	m_trump_card = m_deck.Pop_Top_Card();
 }
 
+/* *********************************************************************
+Function Name: Play_Cards_Against_Each_Other
+Purpose: To play a new round if the round is active.
+Parameters:
+			None
+Return Value: None
+Local Variables:
+            None
+Algorithm:
+            1) Plays through the game untill all the cards are finished.
+            2) This is the main loop of the game.
+Assistance Received: none
+********************************************************************* */
 const std::vector<int> & Round::Get_Scores() const {
 	return m_scores;
 }
 
+/* *********************************************************************
+Function Name: Print_Player1_Hand
+Purpose: To play a new round if the round is active.
+Parameters:
+			None
+Return Value: None
+Local Variables:
+            None
+Algorithm:
+            1) Plays through the game untill all the cards are finished.
+            2) This is the main loop of the game.
+Assistance Received: none
+********************************************************************* */
 void Round::Print_Player1_Hand() const{
 	std::cout << "Human:" << std::endl << "Score: " << m_scores[0] << std::endl;
 	std::cout << m_player1.Get_Console_Message() << std::endl;
 }
 
+/* *********************************************************************
+Function Name: Print_Player2_Hand
+Purpose: To play a new round if the round is active.
+Parameters:
+			None
+Return Value: None
+Local Variables:
+            None
+Algorithm:
+            1) Plays through the game untill all the cards are finished.
+            2) This is the main loop of the game.
+Assistance Received: none
+********************************************************************* */
 void Round::Print_Player2_Hand() const {
 	std::cout << "Computer:" << std::endl << "Score: " << m_scores[1] << std::endl;
 	std::cout << m_player2.Get_Console_Message() << std::endl;
 }
 
+/* *********************************************************************
+Function Name: Print_Interface_Message
+Purpose: To play a new round if the round is active.
+Parameters:
+			None
+Return Value: None
+Local Variables:
+            None
+Algorithm:
+            1) Plays through the game untill all the cards are finished.
+            2) This is the main loop of the game.
+Assistance Received: none
+********************************************************************* */
 void Round::Print_Interface_Message() const {
 	std::cout << "Round: " << m_cur_round_number << std::endl;
 	std::cout << std::endl;
@@ -172,14 +289,53 @@ void Round::Print_Interface_Message() const {
 	std::cout << std::endl << std::endl;
 }
 
+/* *********************************************************************
+Function Name: Set_Cur_Round_Number
+Purpose: To play a new round if the round is active.
+Parameters:
+			None
+Return Value: None
+Local Variables:
+            None
+Algorithm:
+            1) Plays through the game untill all the cards are finished.
+            2) This is the main loop of the game.
+Assistance Received: none
+********************************************************************* */
 void Round::Set_Cur_Round_Number(int a_cur_round) {
 	m_cur_round_number = a_cur_round;
 }
 
+/* *********************************************************************
+Function Name: Set_Previous_Scores
+Purpose: To play a new round if the round is active.
+Parameters:
+			None
+Return Value: None
+Local Variables:
+            None
+Algorithm:
+            1) Plays through the game untill all the cards are finished.
+            2) This is the main loop of the game.
+Assistance Received: none
+********************************************************************* */
 void Round::Set_Previous_Scores(std::vector<int> a_prev_scores) {
 	m_prev_scores = a_prev_scores;
 }
 
+/* *********************************************************************
+Function Name: Save_To_File
+Purpose: To play a new round if the round is active.
+Parameters:
+			None
+Return Value: None
+Local Variables:
+            None
+Algorithm:
+            1) Plays through the game untill all the cards are finished.
+            2) This is the main loop of the game.
+Assistance Received: none
+********************************************************************* */
 void Round::Save_To_File(std::string a_path) const {
 	std::ofstream file;
 	file.open(a_path);
@@ -220,6 +376,19 @@ void Round::Save_To_File(std::string a_path) const {
 	file.close();
 }
 
+/* *********************************************************************
+Function Name: Load_From_File
+Purpose: To play a new round if the round is active.
+Parameters:
+			None
+Return Value: None
+Local Variables:
+            None
+Algorithm:
+            1) Plays through the game untill all the cards are finished.
+            2) This is the main loop of the game.
+Assistance Received: none
+********************************************************************* */
 void Round::Load_From_File(std::string a_path) {
 	std::ifstream file(a_path);
 	std::string line;
@@ -333,6 +502,19 @@ void Round::Load_From_File(std::string a_path) {
 	m_cur_round_number = round_number;
 }
 
+/* *********************************************************************
+Function Name: Play_Turn_And_Pick_Up_From_Stock
+Purpose: To play a new round if the round is active.
+Parameters:
+			None
+Return Value: None
+Local Variables:
+            None
+Algorithm:
+            1) Plays through the game untill all the cards are finished.
+            2) This is the main loop of the game.
+Assistance Received: none
+********************************************************************* */
 void Round::Play_Turn_And_Dont_Pick_Up_From_Stock() {
 	Print_Interface_Message();
 	// The following function will update lead and chase player based on the outcome of the battle.
@@ -344,6 +526,19 @@ void Round::Play_Turn_And_Dont_Pick_Up_From_Stock() {
 	}
 }
 
+/* *********************************************************************
+Function Name: Play_Turn_And_Pick_Up_From_Stock
+Purpose: To play a new round if the round is active.
+Parameters:
+			None
+Return Value: None
+Local Variables:
+            None
+Algorithm:
+            1) Plays through the game untill all the cards are finished.
+            2) This is the main loop of the game.
+Assistance Received: none
+********************************************************************* */
 void Round::Play_Turn_And_Pick_Up_From_Stock() {
 	Play_Turn_And_Dont_Pick_Up_From_Stock();
 	const int chase_player = m_cur_lead_player ^ 1;
@@ -351,6 +546,19 @@ void Round::Play_Turn_And_Pick_Up_From_Stock() {
 	m_players[chase_player]->Give_Card_To_Player(m_deck.Pop_Top_Card());
 }
 
+/* *********************************************************************
+Function Name: Reset_Round
+Purpose: To play a new round if the round is active.
+Parameters:
+			None
+Return Value: None
+Local Variables:
+            None
+Algorithm:
+            1) Plays through the game untill all the cards are finished.
+            2) This is the main loop of the game.
+Assistance Received: none
+********************************************************************* */
 void Round::Reset_Round() {
 	// Put all cards back in deck
 	for(Player* player_ptr: m_players) {
@@ -371,6 +579,19 @@ void Round::Reset_Round() {
 	m_scores[1] = 0;
 }
 
+/* *********************************************************************
+Function Name: Ask_Input_From_Menu
+Purpose: To play a new round if the round is active.
+Parameters:
+			None
+Return Value: None
+Local Variables:
+            None
+Algorithm:
+            1) Plays through the game untill all the cards are finished.
+            2) This is the main loop of the game.
+Assistance Received: none
+********************************************************************* */
 void Round::Ask_Input_From_Menu(int a_cur_player) const {
 	auto get_int_input_from_user = []() {
 		int ret_val = -1;
@@ -452,14 +673,53 @@ void Round::Ask_Input_From_Menu(int a_cur_player) const {
 	}
 }
 
+/* *********************************************************************
+Function Name: Increase_Round_Number
+Purpose: To play a new round if the round is active.
+Parameters:
+			None
+Return Value: None
+Local Variables:
+            None
+Algorithm:
+            1) Plays through the game untill all the cards are finished.
+            2) This is the main loop of the game.
+Assistance Received: none
+********************************************************************* */
 void Round::Increase_Round_Number() {
 	m_cur_round_number+=1;
 }
 
+/* *********************************************************************
+Function Name: Set_Player_1_Lead_Player
+Purpose: To play a new round if the round is active.
+Parameters:
+			None
+Return Value: None
+Local Variables:
+            None
+Algorithm:
+            1) Plays through the game untill all the cards are finished.
+            2) This is the main loop of the game.
+Assistance Received: none
+********************************************************************* */
 void Round::Set_Player_1_Lead_Player() {
     m_cur_lead_player = 0;
 }
 
+/* *********************************************************************
+Function Name: Set_Player_2_Lead_Player
+Purpose: To play a new round if the round is active.
+Parameters:
+			None
+Return Value: None
+Local Variables:
+            None
+Algorithm:
+            1) Plays through the game untill all the cards are finished.
+            2) This is the main loop of the game.
+Assistance Received: none
+********************************************************************* */
 void Round::Set_Player_2_Lead_Player() {
     m_cur_lead_player = 1;
 }
